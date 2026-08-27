@@ -3,12 +3,9 @@ import json
 import secrets
 from datetime import datetime
 import pandas as pd
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from pathlib import Path
-
-app = Flask(__name__)
-CORS(app)
 
 PASTA_RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PASTA_DADOS = os.path.join(PASTA_RAIZ, 'dados')
@@ -17,6 +14,9 @@ ARQUIVO_MATRIZ = os.path.join(PASTA_RAIZ, 'SHE 10 - B Work Permit Systems-Respon
 ARQUIVO_HISTORICO = os.path.join(PASTA_DADOS, 'historico_atualizacoes.json')
 PIN_ADMIN = os.environ.get('PTW_ADMIN_PIN', 'JDEPIU')
 TOKENS_ADMIN = set()
+
+app = Flask(__name__, static_folder=None)
+CORS(app)
 
 os.makedirs(PASTA_DADOS, exist_ok=True)
 
@@ -28,6 +28,16 @@ print("="*50)
 # IMPORTA AS FUNÇÕES DO CONVERSOR
 # ============================================================
 import conversor
+
+
+@app.route('/')
+def pagina_inicial():
+    return send_from_directory(PASTA_RAIZ, 'index.html')
+
+
+@app.route('/<path:nome_arquivo>')
+def arquivos_publicos(nome_arquivo):
+    return send_from_directory(PASTA_RAIZ, nome_arquivo)
 
 # ============================================================
 # FUNÇÃO AUXILIAR CORS

@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000';
+const API_URL = window.location.protocol === 'file:' ? 'http://localhost:5000' : window.location.origin;
 const tokenStorageKey = 'ptw_admin_token';
 const uploadRoutes = {
     treinamentos: '/api/upload_treinamentos',
@@ -49,7 +49,7 @@ async function fazerLogin(event) {
         document.getElementById('pinInput').value = '';
         exibirPainelAdmin();
     } catch (erro) {
-        mostrarErro(loginError, `❌ ${erro.message || 'Servidor indisponível.'}`);
+        mostrarErro(loginError, `❌ Não foi possível conectar ao servidor. Execute iniciar_servidor.bat e abra http://localhost:5000/admin.html.`);
     }
 }
 
