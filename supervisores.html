@@ -55,10 +55,6 @@
         </div>
 
         <div class="footer-actions">
-            <div class="upload-section">
-                <button onclick="abrirModalUpload('supervisores')" class="btn-atualizar" style="background:#8e44ad;">📤 Upload Supervisores</button>
-                <span class="upload-hint">Arquivo: SHE 10 - B Work Permit Systems-Responsibility.xlsx</span>
-            </div>
             <div class="qr-code">
                 <img id="qrSupervisores" src="" alt="QR Code" />
                 <p>📱 Acesse pelo celular</p>
@@ -79,44 +75,6 @@
                 <button onclick="atualizarDados()" class="btn-atualizar">🔄 Recarregar</button>
             </div>
         </footer>
-    </div>
-
-    <!-- MODAL DE UPLOAD -->
-    <div id="modalUpload" class="modal" style="display:none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitulo">📤 Upload Excel</h2>
-                <span class="modal-close" onclick="fecharModalUpload()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p id="modalDescricao">Selecione o arquivo Excel para atualizar os dados:</p>
-                <div class="arquivo-esperado">
-                    <strong>📄 Nome do arquivo esperado:</strong>
-                    <span id="nomeArquivoEsperado">SHE 10 - B Work Permit Systems-Responsibility.xlsx</span>
-                </div>
-                
-                <div id="uploadArea" class="upload-area">
-                    <div style="font-size:4rem;">📁</div>
-                    <p style="color:#2c3e50;font-weight:600;margin:10px 0;">Clique para selecionar ou arraste o arquivo</p>
-                    <p style="color:#7f8c8d;font-size:0.9rem;">Arquivos aceitos: .xlsx</p>
-                    <input type="file" id="fileInput" accept=".xlsx" style="display:none;">
-                </div>
-                
-                <div id="fileInfo" class="file-info" style="display:none;">
-                    <span id="fileName">Arquivo selecionado</span>
-                </div>
-                
-                <div id="uploadLoading" class="upload-loading" style="display:none;">
-                    ⏳ Enviando e processando dados... Aguarde!
-                </div>
-                <div id="uploadError" class="upload-error" style="display:none;"></div>
-                
-                <div style="display:flex; gap:10px; margin-top:15px;">
-                    <button onclick="enviarArquivo()" id="btnEnviar" class="btn-atualizar" style="background:#27ae60;" disabled>📤 Enviar e Processar</button>
-                    <button onclick="fecharModalUpload()" class="btn-atualizar" style="background:#95a5a6;">Cancelar</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script src="script.js"></script>

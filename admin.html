@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administração | Matriz PTW</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="container admin-page">
+        <header>
+            <div class="header-top">
+                <img src="imagens/logo-jde.png" alt="JDE Logo" class="logo-jde" />
+                <div>
+                    <h1>⚙️ Administração</h1>
+                    <p>Atualização controlada dos dados da Matriz PTW</p>
+                </div>
+            </div>
+            <a href="index.html" class="btn-voltar">← Voltar</a>
+        </header>
+
+        <section id="loginPanel" class="admin-login">
+            <div class="admin-lock">🔐</div>
+            <h2>Acesso administrativo</h2>
+            <p>Informe o PIN para liberar as atualizações.</p>
+            <form id="loginForm">
+                <label for="pinInput">PIN</label>
+                <input id="pinInput" type="password" autocomplete="current-password" required maxlength="32" />
+                <button class="btn-atualizar" type="submit">🔓 Entrar</button>
+            </form>
+            <div id="loginError" class="upload-error" hidden></div>
+        </section>
+
+        <section id="adminPanel" hidden>
+            <div class="admin-toolbar">
+                <div>
+                    <h2>Atualizar arquivos</h2>
+                    <p>Os dados públicos são regenerados automaticamente após o processamento.</p>
+                </div>
+                <button id="logoutButton" class="btn-atualizar btn-secundario" type="button">Sair</button>
+            </div>
+
+            <div class="admin-upload-grid">
+                <article class="admin-upload-card">
+                    <div class="admin-card-icon">📚</div>
+                    <h3>Treinamentos</h3>
+                    <p>Atualiza os solicitantes PTW, incluindo situação ativa e validade do treinamento.</p>
+                    <label class="file-picker">Selecionar Excel (.xlsx)
+                        <input class="admin-file" data-tipo="treinamentos" type="file" accept=".xlsx,.xls" />
+                    </label>
+                    <span class="selected-file" data-arquivo="treinamentos">Nenhum arquivo selecionado</span>
+                    <button class="btn-atualizar admin-upload-button" data-tipo="treinamentos" type="button" disabled>📤 Enviar treinamentos</button>
+                </article>
+
+                <article class="admin-upload-card">
+                    <div class="admin-card-icon">🛡️</div>
+                    <h3>Matriz de responsabilidades</h3>
+                    <p>Atualiza responsáveis por área e supervisores de altura, quente e confinado.</p>
+                    <label class="file-picker">Selecionar Excel (.xlsx)
+                        <input class="admin-file" data-tipo="matriz" type="file" accept=".xlsx,.xls" />
+                    </label>
+                    <span class="selected-file" data-arquivo="matriz">Nenhum arquivo selecionado</span>
+                    <button class="btn-atualizar admin-upload-button" data-tipo="matriz" type="button" disabled>📤 Enviar matriz</button>
+                </article>
+            </div>
+
+            <div id="adminFeedback" class="upload-loading" hidden></div>
+            <div id="adminError" class="upload-error" hidden></div>
+
+            <section class="history-section">
+                <div class="admin-toolbar">
+                    <div>
+                        <h2>Histórico de atualizações</h2>
+                        <p>Últimas 100 operações registradas pelo servidor.</p>
+                    </div>
+                    <button id="refreshHistory" class="btn-atualizar" type="button">🔄 Atualizar histórico</button>
+                </div>
+                <div class="tabela-container">
+                    <table>
+                        <thead><tr><th>Data</th><th>Tipo</th><th>Arquivo</th><th>Resultado</th><th>Detalhes</th></tr></thead>
+                        <tbody id="historyTable"><tr><td colspan="5" class="history-empty">Carregando histórico...</td></tr></tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <footer>
+            <div class="footer-left">
+                <img src="imagens/logo-jde.png" alt="JDE" class="logo-footer" />
+                <span>🏢 Matriz PTW</span>
+            </div>
+            <div class="footer-right"><button onclick="window.location.href='index.html'" class="btn-atualizar">🏠 Início</button></div>
+        </footer>
+    </div>
+    <script src="admin.js"></script>
+</body>
+</html>

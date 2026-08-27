@@ -1,5 +1,7 @@
 import os
 import json
+import secrets
+from datetime import datetime
 import pandas as pd
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -12,6 +14,9 @@ PASTA_RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PASTA_DADOS = os.path.join(PASTA_RAIZ, 'dados')
 ARQUIVO_TREINAMENTOS = os.path.join(PASTA_RAIZ, 'Treinamentos obrigatórios (SHE-QUALID).xlsx')
 ARQUIVO_MATRIZ = os.path.join(PASTA_RAIZ, 'SHE 10 - B Work Permit Systems-Responsibility.xlsx')
+ARQUIVO_HISTORICO = os.path.join(PASTA_DADOS, 'historico_atualizacoes.json')
+PIN_ADMIN = os.environ.get('PTW_ADMIN_PIN', 'JDEPIU')
+TOKENS_ADMIN = set()
 
 os.makedirs(PASTA_DADOS, exist_ok=True)
 
@@ -31,8 +36,67 @@ def _cors_response():
     response = jsonify({'sucesso': True})
     response.headers.add('Access-Control-Allow-Origin', '*')
     response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Token')
     return response
+
+
+def _admin_autorizado():
+    token = request.headers.get('X-Admin-Token', '')
+    return bool(token) and token in TOKENS_ADMIN
+
+
+def _resposta_nao_autorizada():
+    return jsonify({'sucesso': False, 'mensagem': 'Acesso administrativo necessário.'}), 401
+
+
+def _registrar_historico(tipo, nome_arquivo, sucesso, mensagem):
+    historico = []
+    if os.path.exists(ARQUIVO_HISTORICO):
+        try:
+            with open(ARQUIVO_HISTORICO, 'r', encoding='utf-8') as arquivo:
+                historico = json.load(arquivo)
+        except (OSError, json.JSONDecodeError):
+            historico = []
+
+    historico.insert(0, {
+        'data': datetime.now().isoformat(timespec='seconds'),
+        'tipo': tipo,
+        'arquivo': nome_arquivo,
+        'sucesso': sucesso,
+        'mensagem': mensagem
+    })
+    with open(ARQUIVO_HISTORICO, 'w', encoding='utf-8') as arquivo:
+        json.dump(historico[:100], arquivo, ensure_ascii=False, indent=2)
+
+
+@app.route('/api/admin/login', methods=['POST', 'OPTIONS'])
+def admin_login():
+    if request.method == 'OPTIONS':
+        return _cors_response()
+
+    dados = request.get_json(silent=True) or {}
+    if dados.get('pin') != PIN_ADMIN:
+        return jsonify({'sucesso': False, 'mensagem': 'PIN inválido.'}), 401
+
+    token = secrets.token_urlsafe(32)
+    TOKENS_ADMIN.add(token)
+    return jsonify({'sucesso': True, 'token': token})
+
+
+@app.route('/api/admin/historico', methods=['GET', 'OPTIONS'])
+def admin_historico():
+    if request.method == 'OPTIONS':
+        return _cors_response()
+    if not _admin_autorizado():
+        return _resposta_nao_autorizada()
+
+    if not os.path.exists(ARQUIVO_HISTORICO):
+        return jsonify([])
+    try:
+        with open(ARQUIVO_HISTORICO, 'r', encoding='utf-8') as arquivo:
+            return jsonify(json.load(arquivo))
+    except (OSError, json.JSONDecodeError):
+        return jsonify([])
 
 # ============================================================
 # ROTA: UPLOAD TREINAMENTOS (SOLICITANTES)
@@ -41,6 +105,8 @@ def _cors_response():
 def upload_treinamentos():
     if request.method == 'OPTIONS':
         return _cors_response()
+    if not _admin_autorizado():
+        return _resposta_nao_autorizada()
     
     try:
         print("📤 Upload de TREINAMENTOS...")
@@ -60,11 +126,14 @@ def upload_treinamentos():
         
         sucesso, mensagem = conversor.converter_treinamentos()
         if not sucesso:
+            _registrar_historico('treinamentos', arquivo.filename, False, mensagem)
             return jsonify({'sucesso': False, 'mensagem': mensagem}), 500
         
+        _registrar_historico('treinamentos', arquivo.filename, True, mensagem)
         return jsonify({'sucesso': True, 'mensagem': f'✅ Treinamentos atualizados! {mensagem}'})
         
     except Exception as e:
+        _registrar_historico('treinamentos', request.files.get('arquivo', {}).filename if 'arquivo' in request.files else '', False, str(e))
         return jsonify({'sucesso': False, 'mensagem': str(e)}), 500
 
 # ============================================================
@@ -74,6 +143,8 @@ def upload_treinamentos():
 def upload_matriz():
     if request.method == 'OPTIONS':
         return _cors_response()
+    if not _admin_autorizado():
+        return _resposta_nao_autorizada()
     
     try:
         print("📤 Upload da MATRIZ (Responsáveis + Supervisores)...")
@@ -124,15 +195,18 @@ def upload_matriz():
         with open(os.path.join(PASTA_DADOS, 'supervisores_confinado.json'), 'w', encoding='utf-8') as f:
             json.dump(confinado, f, ensure_ascii=False, indent=2)
         
+        mensagem = f'Responsáveis: {len(dados_resp)} | Altura: {len(altura)} | Quente: {len(quente)} | Confinado: {len(confinado)}'
+        _registrar_historico('matriz', arquivo.filename, True, mensagem)
         return jsonify({
             'sucesso': True,
-            'mensagem': f'✅ Matriz atualizada!\nResponsáveis: {len(dados_resp)}\nAltura: {len(altura)} | Quente: {len(quente)} | Confinado: {len(confinado)}'
+            'mensagem': f'✅ Matriz atualizada!\n{mensagem}'
         })
         
     except Exception as e:
         print(f"❌ Erro: {e}")
         import traceback
         traceback.print_exc()
+        _registrar_historico('matriz', request.files.get('arquivo', {}).filename if 'arquivo' in request.files else '', False, str(e))
         return jsonify({'sucesso': False, 'mensagem': str(e)}), 500
 
 # ============================================================
@@ -142,6 +216,8 @@ def upload_matriz():
 def upload_responsaveis():
     if request.method == 'OPTIONS':
         return _cors_response()
+    if not _admin_autorizado():
+        return _resposta_nao_autorizada()
     
     try:
         print("📤 Upload de RESPONSÁVEIS POR ÁREA...")
@@ -167,12 +243,15 @@ def upload_responsaveis():
         with open(os.path.join(PASTA_DADOS, 'responsaveis.json'), 'w', encoding='utf-8') as f:
             json.dump(dados, f, ensure_ascii=False, indent=2)
         
+        mensagem = f'Responsáveis atualizados! ({len(dados)} registros)'
+        _registrar_historico('responsaveis', arquivo.filename, True, mensagem)
         return jsonify({
             'sucesso': True,
-            'mensagem': f'✅ Responsáveis atualizados! ({len(dados)} registros)'
+            'mensagem': f'✅ {mensagem}'
         })
         
     except Exception as e:
+        _registrar_historico('responsaveis', request.files.get('arquivo', {}).filename if 'arquivo' in request.files else '', False, str(e))
         return jsonify({'sucesso': False, 'mensagem': str(e)}), 500
 
 # ============================================================
@@ -182,6 +261,8 @@ def upload_responsaveis():
 def upload_supervisores():
     if request.method == 'OPTIONS':
         return _cors_response()
+    if not _admin_autorizado():
+        return _resposta_nao_autorizada()
     
     try:
         print("📤 Upload de SUPERVISORES...")
@@ -222,12 +303,15 @@ def upload_supervisores():
         with open(os.path.join(PASTA_DADOS, 'supervisores_confinado.json'), 'w', encoding='utf-8') as f:
             json.dump(confinado, f, ensure_ascii=False, indent=2)
         
+        mensagem = f'Supervisores atualizados!\nAltura: {len(altura)} | Quente: {len(quente)} | Confinado: {len(confinado)}'
+        _registrar_historico('supervisores', arquivo.filename, True, mensagem)
         return jsonify({
             'sucesso': True,
-            'mensagem': f'✅ Supervisores atualizados!\nAltura: {len(altura)} | Quente: {len(quente)} | Confinado: {len(confinado)}'
+            'mensagem': f'✅ {mensagem}'
         })
         
     except Exception as e:
+        _registrar_historico('supervisores', request.files.get('arquivo', {}).filename if 'arquivo' in request.files else '', False, str(e))
         return jsonify({'sucesso': False, 'mensagem': str(e)}), 500
 
 # ============================================================
