@@ -1,7 +1,7 @@
 window.PTW_CONFIG = {
     apiUrl: '',
-    adminPin: '1234',
-    maxLoginAttempts: 3,
-    lockoutMinutes: 5,
-    publicUrl: 'https://ptw-matriz.vercel.app/'
+    ADMIN_PIN: '1234',
+    MAX_TENTATIVAS: 3,
+    TEMPO_BLOQUEIO: 5,
+    publicUrl: 'https://DMOS15.github.io/ptw-matriz/'
 };

@@ -3,9 +3,13 @@
 // ============================================================
 
 const BASE_URL = './dados/';
-const API_URL = window.location.hostname === 'localhost' || window.location.protocol === 'file:'
-    ? 'http://localhost:5000/api'
-    : '/api';
+const API_URL = window.PTW_CONFIG?.apiUrl || (
+    window.location.hostname === 'localhost' || window.location.protocol === 'file:'
+        ? 'http://localhost:5000/api'
+        : window.location.hostname.endsWith('.github.io')
+            ? 'https://ptw-matriz.vercel.app/api'
+            : '/api'
+);
 const ADMIN_TOKEN_KEY = 'ptw_admin_token';
 
 async function verificarServidor() {
@@ -125,7 +129,7 @@ function popularSelect(selectId, itens, labelTodos = 'TODAS AS ÁREAS') {
 // GERAR QR CODE
 // ============================================================
 function gerarQRCode(qrId) {
-    const url = 'https://ptw-matriz.vercel.app/';
+    const url = 'https://DMOS15.github.io/ptw-matriz/';
     const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(url)}`;
     const qrImg = document.getElementById(qrId);
     if (qrImg) {

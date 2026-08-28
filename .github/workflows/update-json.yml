@@ -1,0 +1,28 @@
+name: Validate PTW JSON files
+
+on:
+  push:
+    paths:
+      - 'dados/*.json'
+      - '.github/workflows/update-json.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate JSON
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for path in Path('dados').glob('*.json'):
+              json.loads(path.read_text(encoding='utf-8'))
+              print(f'OK: {path}')
+          PY

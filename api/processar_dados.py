@@ -1,7 +1,6 @@
 import json
 import os
 import secrets
-import sys
 import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -18,8 +17,8 @@ TOKENS = set()
 LOGIN_FAILURES = {}
 HISTORY_FILE = Path(tempfile.gettempdir()) / 'ptw_historico_atualizacoes.json'
 
-sys.path.insert(0, str(ROOT / 'scripts'))
 import conversor
+from atualizar_github import commit_jsons
 
 app = Flask(__name__)
 CORS(app)
@@ -69,35 +68,33 @@ def _store_upload(file, destination):
 
 def _process_training(source):
     conversor.ARQUIVO_EXCEL = str(source)
-    conversor.PASTA_JSON = str(DATA_DIR)
-    success, message = conversor.converter_treinamentos()
-    if not success:
-        raise ValueError(message)
-    data = json.loads((DATA_DIR / 'solicitantes.json').read_text(encoding='utf-8'))
-    return len(data), message
+    conversor.DATA_DIR = DATA_DIR
+    data = conversor.converter_treinamentos(source)
+    return len(data), f'{len(data)} registros processados'
 
 
 def _process_matrix(source, process_responsaveis=True, process_supervisores=True):
     conversor.ARQUIVO_MATRIZ = str(source)
-    conversor.PASTA_JSON = str(DATA_DIR)
+    conversor.DATA_DIR = DATA_DIR
     total = 0
     messages = []
     if process_responsaveis:
-        data = conversor.converter_responsaveis_excel()
+        data = conversor.converter_responsaveis(source)
         if not data:
             raise ValueError('Nenhum responsável foi encontrado na aba RESPONSAVEIS DE AREA.')
         _save_json('responsaveis.json', data)
         total += len(data)
         messages.append(f'Responsáveis: {len(data)}')
     if process_supervisores:
-        for sheet, filename, label in [
-            ('SUPERVISOR TRABALHO EM ALTURA', 'supervisores_altura.json', 'Altura'),
-            ('SUPERVISOR TRABALHO A QUENTE', 'supervisores_quente.json', 'Quente'),
-            ('SUPERVISOR TRABALHO CONFINADO', 'supervisores_confinado.json', 'Confinado')
+        supervisores = conversor.converter_supervisores(source)
+        for filename, label in [
+            ('supervisores_altura.json', 'Altura'),
+            ('supervisores_quente.json', 'Quente'),
+            ('supervisores_confinado.json', 'Confinado')
         ]:
-            data = conversor.converter_supervisores_excel(sheet)
+            data = supervisores[filename]
             if not data:
-                raise ValueError(f'Nenhum supervisor foi encontrado na aba {sheet}.')
+                raise ValueError(f'Nenhum supervisor foi encontrado na categoria {label}.')
             _save_json(filename, data)
             total += len(data)
             messages.append(f'{label}: {len(data)}')
@@ -163,6 +160,7 @@ def upload(kind):
                 count, message = _process_matrix(source, False, True)
             else:
                 count, message = _process_matrix(source, True, True)
+            commit_jsons(DATA_DIR, f'Atualiza dados PTW: {kind}')
         _history(kind, filename, True, message, count)
         return jsonify({'sucesso': True, 'mensagem': f'Concluído! {message}', 'registros': count})
     except Exception as error:

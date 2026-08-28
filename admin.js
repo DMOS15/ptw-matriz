@@ -2,7 +2,9 @@ const CONFIG = window.PTW_CONFIG || {};
 const API_URL = CONFIG.apiUrl || window.PTW_API_URL || (
     window.location.hostname === 'localhost' || window.location.protocol === 'file:'
         ? 'http://localhost:5000/api'
-        : '/api'
+        : window.location.hostname.endsWith('.github.io')
+            ? 'https://ptw-matriz.vercel.app/api'
+            : '/api'
 );
 const IS_GITHUB_PAGES = window.location.hostname.endsWith('.github.io');
 const tokenStorageKey = 'ptw_admin_token';
