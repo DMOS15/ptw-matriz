@@ -44,3 +44,8 @@ def upload_matriz():
 		return _json_error(str(error), status)
 
 handler = app
+
+
+if __name__ == '__main__':
+	print("🚀 Servidor rodando em: http://localhost:5001")
+	app.run(debug=True, port=5001)
