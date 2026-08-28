@@ -1,4 +1,7 @@
-const API_URL = window.location.protocol === 'file:' ? 'http://localhost:5000' : window.location.origin;
+const API_URL = window.PTW_API_URL || (
+    window.location.protocol === 'file:' ? 'http://localhost:5000' : window.location.origin
+);
+const IS_GITHUB_PAGES = window.location.hostname.endsWith('.github.io');
 const tokenStorageKey = 'ptw_admin_token';
 const uploadRoutes = {
     treinamentos: '/api/upload_treinamentos',
@@ -13,6 +16,13 @@ const adminFeedback = document.getElementById('adminFeedback');
 
 function obterToken() {
     return sessionStorage.getItem(tokenStorageKey);
+}
+
+function mensagemServidorIndisponivel() {
+    if (IS_GITHUB_PAGES && !window.PTW_API_URL) {
+        return 'O site oficial é apenas a interface. Para atualizar dados, execute o servidor local e abra http://localhost:5000/admin.html, ou configure uma API Flask pública em window.PTW_API_URL.';
+    }
+    return 'Servidor indisponível. Execute iniciar_servidor.bat e abra http://localhost:5000/admin.html.';
 }
 
 function exibirPainelAdmin() {
@@ -38,6 +48,9 @@ async function fazerLogin(event) {
     const pin = document.getElementById('pinInput').value;
 
     try {
+        if (IS_GITHUB_PAGES && !window.PTW_API_URL) {
+            throw new Error(mensagemServidorIndisponivel());
+        }
         const servidor = await fetch(`${API_URL}/api/status`, { cache: 'no-store' });
         if (!servidor.ok) throw new Error(`Servidor respondeu com HTTP ${servidor.status}.`);
         console.info('[PTW] Servidor online:', API_URL);
@@ -54,7 +67,7 @@ async function fazerLogin(event) {
     } catch (erro) {
         console.error('[PTW] Falha na conexão/login:', erro);
         const mensagem = erro instanceof TypeError
-            ? 'Servidor indisponível. Execute iniciar_servidor.bat e abra http://localhost:5000/admin.html.'
+            ? mensagemServidorIndisponivel()
             : erro.message;
         mostrarErro(loginError, `❌ ${mensagem}`);
     }
@@ -91,6 +104,9 @@ async function enviarArquivo(tipo) {
     dados.append('arquivo', arquivo);
 
     try {
+        if (IS_GITHUB_PAGES && !window.PTW_API_URL) {
+            throw new Error(mensagemServidorIndisponivel());
+        }
         const servidor = await fetch(`${API_URL}/api/status`, { cache: 'no-store' });
         if (!servidor.ok) throw new Error(`Servidor respondeu com HTTP ${servidor.status}.`);
         console.info('[PTW] Servidor online para upload:', API_URL);
@@ -115,7 +131,7 @@ async function enviarArquivo(tipo) {
         adminFeedback.hidden = true;
         console.error('[PTW] Falha no upload:', erro);
         const mensagem = erro instanceof TypeError
-            ? 'Servidor indisponível. Execute iniciar_servidor.bat e abra http://localhost:5000/admin.html.'
+            ? mensagemServidorIndisponivel()
             : erro.message;
         mostrarErro(adminError, `❌ ${mensagem || 'Erro ao enviar arquivo.'}`);
     } finally {
