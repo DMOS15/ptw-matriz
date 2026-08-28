@@ -1,13 +1,19 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "api/*.py",
-      "use": "@vercel/python"
-    }
+    { "src": "api/processar_dados.py", "use": "@vercel/python" },
+    { "src": "api/upload_treinamentos.py", "use": "@vercel/python" },
+    { "src": "api/upload_responsaveis.py", "use": "@vercel/python" },
+    { "src": "api/upload_supervisores.py", "use": "@vercel/python" },
+    { "src": "api/upload_matriz.py", "use": "@vercel/python" }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/processar_dados.py" },
+    { "src": "/api/status", "dest": "/api/processar_dados.py" },
+    { "src": "/api/admin/(.*)", "dest": "/api/processar_dados.py" },
+    { "src": "/api/upload_treinamentos", "dest": "/api/upload_treinamentos.py" },
+    { "src": "/api/upload_responsaveis", "dest": "/api/upload_responsaveis.py" },
+    { "src": "/api/upload_supervisores", "dest": "/api/upload_supervisores.py" },
+    { "src": "/api/upload_matriz", "dest": "/api/upload_matriz.py" },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }

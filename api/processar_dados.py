@@ -1,4 +1,6 @@
 import json
+import hashlib
+import hmac
 import os
 import secrets
 import tempfile
@@ -13,12 +15,11 @@ DATA_DIR = Path(os.environ.get('PTW_DATA_DIR', Path(tempfile.gettempdir()) / 'pt
 PIN_ADMIN = os.environ.get('PTW_ADMIN_PIN', '1234')
 MAX_ATTEMPTS = 3
 BLOCK_MINUTES = 5
-TOKENS = set()
 LOGIN_FAILURES = {}
 HISTORY_FILE = Path(tempfile.gettempdir()) / 'ptw_historico_atualizacoes.json'
+TOKEN_SECRET = os.environ.get('PTW_TOKEN_SECRET', 'ptw-development-secret-change-me')
 
 import conversor
-from atualizar_github import commit_jsons
 
 app = Flask(__name__)
 CORS(app)
@@ -29,7 +30,13 @@ def _json_error(message, status=400):
 
 
 def _token_ok():
-    return request.headers.get('X-Admin-Token', '') in TOKENS
+    token = request.headers.get('X-Admin-Token', '')
+    try:
+        issued, signature = token.rsplit('.', 1)
+        expected = hmac.new(TOKEN_SECRET.encode(), issued.encode(), hashlib.sha256).hexdigest()
+        return hmac.compare_digest(signature, expected)
+    except ValueError:
+        return False
 
 
 def _history(tipo, filename, success, message, count=0):
@@ -66,14 +73,14 @@ def _store_upload(file, destination):
     return file.filename
 
 
-def _process_training(source):
+def process_training(source):
     conversor.ARQUIVO_EXCEL = str(source)
     conversor.DATA_DIR = DATA_DIR
     data = conversor.converter_treinamentos(source)
     return len(data), f'{len(data)} registros processados'
 
 
-def _process_matrix(source, process_responsaveis=True, process_supervisores=True):
+def process_matrix(source, process_responsaveis=True, process_supervisores=True):
     conversor.ARQUIVO_MATRIZ = str(source)
     conversor.DATA_DIR = DATA_DIR
     total = 0
@@ -111,13 +118,11 @@ def login():
     address = request.remote_addr or 'unknown'
     now = datetime.now()
     state = LOGIN_FAILURES.get(address, {'attempts': 0, 'blocked_until': None})
-    blocked_until = state['blocked_until']
-    if blocked_until and now < blocked_until:
-        remaining = int((blocked_until - now).total_seconds() // 60) + 1
+    if state['blocked_until'] and now < state['blocked_until']:
+        remaining = int((state['blocked_until'] - now).total_seconds() // 60) + 1
         return _json_error(f'Muitas tentativas. Aguarde {remaining} minuto(s).', 429)
-    if blocked_until:
+    if state['blocked_until']:
         state = {'attempts': 0, 'blocked_until': None}
-
     payload = request.get_json(silent=True) or {}
     if str(payload.get('pin', '')) != PIN_ADMIN:
         state['attempts'] += 1
@@ -127,10 +132,10 @@ def login():
             return _json_error('PIN bloqueado por 5 minutos após 3 tentativas.', 429)
         LOGIN_FAILURES[address] = state
         return _json_error(f'PIN inválido. Tentativa {state["attempts"]} de {MAX_ATTEMPTS}.', 401)
-
     LOGIN_FAILURES.pop(address, None)
-    token = secrets.token_urlsafe(32)
-    TOKENS.add(token)
+    issued = f'{int(now.timestamp())}.{secrets.token_urlsafe(24)}'
+    signature = hmac.new(TOKEN_SECRET.encode(), issued.encode(), hashlib.sha256).hexdigest()
+    token = f'{issued}.{signature}'
     return jsonify({'sucesso': True, 'token': token})
 
 
@@ -142,51 +147,6 @@ def history():
         return jsonify(json.loads(HISTORY_FILE.read_text(encoding='utf-8')) if HISTORY_FILE.exists() else [])
     except (OSError, json.JSONDecodeError):
         return jsonify([])
-
-
-def upload(kind):
-    if not _token_ok():
-        return _json_error('Acesso administrativo necessário.', 401)
-    file = request.files.get('arquivo')
-    try:
-        with tempfile.TemporaryDirectory() as folder:
-            source = Path(folder) / (file.filename if file else 'upload.xlsx')
-            filename = _store_upload(file, source)
-            if kind == 'treinamentos':
-                count, message = _process_training(source)
-            elif kind == 'responsaveis':
-                count, message = _process_matrix(source, True, False)
-            elif kind == 'supervisores':
-                count, message = _process_matrix(source, False, True)
-            else:
-                count, message = _process_matrix(source, True, True)
-            commit_jsons(DATA_DIR, f'Atualiza dados PTW: {kind}')
-        _history(kind, filename, True, message, count)
-        return jsonify({'sucesso': True, 'mensagem': f'Concluído! {message}', 'registros': count})
-    except Exception as error:
-        filename = file.filename if file else ''
-        _history(kind, filename, False, str(error))
-        return _json_error(str(error), 500)
-
-
-@app.route('/api/upload_treinamentos', methods=['POST'])
-def upload_treinamentos():
-    return upload('treinamentos')
-
-
-@app.route('/api/upload_responsaveis', methods=['POST'])
-def upload_responsaveis():
-    return upload('responsaveis')
-
-
-@app.route('/api/upload_supervisores', methods=['POST'])
-def upload_supervisores():
-    return upload('supervisores')
-
-
-@app.route('/api/upload_matriz', methods=['POST'])
-def upload_matriz():
-    return upload('matriz')
 
 
 handler = app
