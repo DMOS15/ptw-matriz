@@ -1,5 +1,7 @@
 const API_URL = window.PTW_API_URL || (
-    window.location.protocol === 'file:' ? 'http://localhost:5000' : window.location.origin
+    window.location.hostname === 'localhost' || window.location.protocol === 'file:'
+        ? 'http://localhost:5000/api'
+        : '/api'
 );
 const IS_GITHUB_PAGES = window.location.hostname.endsWith('.github.io');
 const tokenStorageKey = 'ptw_admin_token';
@@ -51,10 +53,10 @@ async function fazerLogin(event) {
         if (IS_GITHUB_PAGES && !window.PTW_API_URL) {
             throw new Error(mensagemServidorIndisponivel());
         }
-        const servidor = await fetch(`${API_URL}/api/status`, { cache: 'no-store' });
+        const servidor = await fetch(`${API_URL}/status`, { cache: 'no-store' });
         if (!servidor.ok) throw new Error(`Servidor respondeu com HTTP ${servidor.status}.`);
         console.info('[PTW] Servidor online:', API_URL);
-        const resposta = await fetch(`${API_URL}/api/admin/login`, {
+        const resposta = await fetch(`${API_URL}/admin/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pin })
@@ -107,10 +109,11 @@ async function enviarArquivo(tipo) {
         if (IS_GITHUB_PAGES && !window.PTW_API_URL) {
             throw new Error(mensagemServidorIndisponivel());
         }
-        const servidor = await fetch(`${API_URL}/api/status`, { cache: 'no-store' });
+        const servidor = await fetch(`${API_URL}/status`, { cache: 'no-store' });
         if (!servidor.ok) throw new Error(`Servidor respondeu com HTTP ${servidor.status}.`);
         console.info('[PTW] Servidor online para upload:', API_URL);
-        const resposta = await fetch(`${API_URL}${uploadRoutes[tipo]}`, {
+        const rota = uploadRoutes[tipo].replace(/^\/api/, '');
+        const resposta = await fetch(`${API_URL}${rota}`, {
             method: 'POST',
             headers: { 'X-Admin-Token': obterToken() },
             body: dados
@@ -144,7 +147,7 @@ async function enviarArquivo(tipo) {
 async function carregarHistorico() {
     const tabela = document.getElementById('historyTable');
     try {
-        const resposta = await fetch(`${API_URL}/api/admin/historico`, {
+        const resposta = await fetch(`${API_URL}/admin/historico`, {
             headers: { 'X-Admin-Token': obterToken() }
         });
         if (!resposta.ok) throw new Error('Não foi possível carregar o histórico.');

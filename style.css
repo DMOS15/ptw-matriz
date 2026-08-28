@@ -321,6 +321,16 @@ tbody td {
     font-weight: 700;
 }
 
+.servidor-online {
+    color: #27ae60;
+    font-weight: 600;
+}
+
+.servidor-offline {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
 .areas-lista {
     display: flex;
     flex-wrap: wrap;

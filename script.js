@@ -3,18 +3,30 @@
 // ============================================================
 
 const BASE_URL = './dados/';
-const API_URL = window.location.protocol === 'file:' ? 'http://localhost:5000' : window.location.origin;
+const API_URL = window.location.hostname === 'localhost' || window.location.protocol === 'file:'
+    ? 'http://localhost:5000/api'
+    : '/api';
 const ADMIN_TOKEN_KEY = 'ptw_admin_token';
 
 async function verificarServidor() {
     try {
-        const resposta = await fetch(`${API_URL}/api/status`, { cache: 'no-store' });
+        const resposta = await fetch(`${API_URL}/status`, { cache: 'no-store' });
         if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
         const dados = await resposta.json();
         console.info('[PTW] Servidor online:', dados.status, API_URL);
+        const status = document.getElementById('status-servidor');
+        if (status) {
+            status.textContent = '🟢 Servidor online';
+            status.className = 'servidor-online';
+        }
         return true;
     } catch (erro) {
         console.error('[PTW] Servidor indisponível em', API_URL, erro);
+        const status = document.getElementById('status-servidor');
+        if (status) {
+            status.textContent = '🔴 Servidor offline';
+            status.className = 'servidor-offline';
+        }
         return false;
     }
 }
@@ -113,7 +125,7 @@ function popularSelect(selectId, itens, labelTodos = 'TODAS AS ÁREAS') {
 // GERAR QR CODE
 // ============================================================
 function gerarQRCode(qrId) {
-    const url = window.location.href;
+    const url = 'https://ptw-matriz.vercel.app/';
     const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(url)}`;
     const qrImg = document.getElementById(qrId);
     if (qrImg) {
@@ -522,7 +534,7 @@ function enviarArquivo() {
         'supervisores': '/api/upload_supervisores',
         'matriz': '/api/upload_matriz'
     };
-    const rota = rotas[tipoUpload] || '/api/upload_treinamentos';
+    const rota = (rotas[tipoUpload] || '/api/upload_treinamentos').replace(/^\/api/, '');
     
     verificarServidor().then(servidorOnline => {
         if (!servidorOnline) {
