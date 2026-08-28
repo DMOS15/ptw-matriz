@@ -5,7 +5,7 @@
 const BASE_URL = './dados/';
 const API_URL = window.PTW_CONFIG?.apiUrl || (
     window.location.hostname === 'localhost' || window.location.protocol === 'file:'
-        ? 'http://localhost:5000/api'
+        ? 'http://localhost:5001/api'
         : window.location.hostname.endsWith('.github.io')
             ? 'https://ptw-matriz.vercel.app/api'
             : '/api'
