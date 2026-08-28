@@ -23,6 +23,8 @@ async function verificarServidor() {
             status.textContent = '🟢 Servidor online';
             status.className = 'servidor-online';
         }
+        const statusServidor = document.getElementById('statusServidor');
+        if (statusServidor) statusServidor.textContent = '🟢 Online';
         return true;
     } catch (erro) {
         console.error('[PTW] Servidor indisponível em', API_URL, erro);
@@ -31,6 +33,8 @@ async function verificarServidor() {
             status.textContent = '🔴 Servidor offline';
             status.className = 'servidor-offline';
         }
+        const statusServidor = document.getElementById('statusServidor');
+        if (statusServidor) statusServidor.textContent = '🔴 Offline';
         return false;
     }
 }
@@ -527,6 +531,7 @@ function enviarArquivo() {
     
     loading.style.display = 'block';
     loading.textContent = '⏳ Enviando e processando arquivo... Aguarde!';
+    atualizarProgressoAdmin(0, 'Preparando envio...', arquivoSelecionado.name);
     error.style.display = 'none';
     btnEnviar.disabled = true;
     
@@ -543,8 +548,9 @@ function enviarArquivo() {
     
     verificarServidor().then(servidorOnline => {
         if (!servidorOnline) {
-            throw new Error('Servidor indisponível. Execute iniciar_servidor.bat e abra o sistema por http://localhost:5000.');
+            throw new Error('Servidor indisponível. Inicie a API na porta 5001 e tente novamente.');
         }
+        atualizarProgressoAdmin(10, 'Enviando arquivo...', arquivoSelecionado.name);
         return fetch(`${API_URL}${rota}`, {
             method: 'POST',
             headers: { 'X-Admin-Token': sessionStorage.getItem(ADMIN_TOKEN_KEY) || '' },
@@ -564,6 +570,7 @@ function enviarArquivo() {
     }).then(data => {
         if (!data.sucesso) throw new Error(data.mensagem || 'O servidor não conseguiu processar o arquivo.');
         loading.style.display = 'none';
+        atualizarProgressoAdmin(100, 'Concluído!', data.mensagem);
         btnEnviar.disabled = false;
         alert('✅ ' + data.mensagem);
         fecharModalUpload();
@@ -571,8 +578,57 @@ function enviarArquivo() {
     }).catch(err => {
         loading.style.display = 'none';
         btnEnviar.disabled = false;
+        atualizarProgressoAdmin(0, 'Falha no envio.', err.message || 'Erro ao enviar arquivo.');
         error.textContent = `❌ ${err.message || 'Erro ao enviar arquivo.'}`;
         error.style.display = 'block';
         console.error('[PTW] Falha no upload:', err);
     });
+}
+
+async function verificarPin() {
+    const campoPin = document.getElementById('inputPin');
+    const mensagem = document.getElementById('mensagemErro');
+    const pin = campoPin ? campoPin.value.trim() : '';
+    if (!pin) {
+        mensagem.textContent = 'Digite o PIN para continuar.';
+        mensagem.style.display = 'block';
+        return;
+    }
+
+    mensagem.style.display = 'none';
+    try {
+        const resposta = await fetch(`${API_URL}/admin/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pin })
+        });
+        const dados = await resposta.json();
+        if (!resposta.ok || !dados.sucesso) {
+            throw new Error(dados.mensagem || 'PIN inválido.');
+        }
+
+        sessionStorage.setItem(ADMIN_TOKEN_KEY, dados.token);
+        document.getElementById('telaLogin').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        campoPin.value = '';
+        verificarServidor();
+    } catch (erro) {
+        mensagem.textContent = `❌ ${erro.message || 'Não foi possível acessar o servidor.'}`;
+        mensagem.style.display = 'block';
+        console.error('[PTW] Falha no login:', erro);
+    }
+}
+
+function atualizarProgressoAdmin(percentual, mensagem, detalhes = '') {
+    const painel = document.getElementById('uploadProgresso');
+    const barra = document.getElementById('progressoBarra');
+    const porcentagem = document.getElementById('progressoPorcentagem');
+    const texto = document.getElementById('progressoMensagem');
+    const detalhe = document.getElementById('progressoDetalhes');
+    if (!painel || !barra) return;
+    painel.style.display = 'block';
+    barra.style.width = `${percentual}%`;
+    if (porcentagem) porcentagem.textContent = `${percentual}%`;
+    if (texto) texto.textContent = mensagem;
+    if (detalhe) detalhe.textContent = detalhes;
 }
