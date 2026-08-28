@@ -38,6 +38,9 @@ async function fazerLogin(event) {
     const pin = document.getElementById('pinInput').value;
 
     try {
+        const servidor = await fetch(`${API_URL}/api/status`, { cache: 'no-store' });
+        if (!servidor.ok) throw new Error(`Servidor respondeu com HTTP ${servidor.status}.`);
+        console.info('[PTW] Servidor online:', API_URL);
         const resposta = await fetch(`${API_URL}/api/admin/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -49,7 +52,11 @@ async function fazerLogin(event) {
         document.getElementById('pinInput').value = '';
         exibirPainelAdmin();
     } catch (erro) {
-        mostrarErro(loginError, `❌ Não foi possível conectar ao servidor. Execute iniciar_servidor.bat e abra http://localhost:5000/admin.html.`);
+        console.error('[PTW] Falha na conexão/login:', erro);
+        const mensagem = erro instanceof TypeError
+            ? 'Servidor indisponível. Execute iniciar_servidor.bat e abra http://localhost:5000/admin.html.'
+            : erro.message;
+        mostrarErro(loginError, `❌ ${mensagem}`);
     }
 }
 
@@ -84,6 +91,9 @@ async function enviarArquivo(tipo) {
     dados.append('arquivo', arquivo);
 
     try {
+        const servidor = await fetch(`${API_URL}/api/status`, { cache: 'no-store' });
+        if (!servidor.ok) throw new Error(`Servidor respondeu com HTTP ${servidor.status}.`);
+        console.info('[PTW] Servidor online para upload:', API_URL);
         const resposta = await fetch(`${API_URL}${uploadRoutes[tipo]}`, {
             method: 'POST',
             headers: { 'X-Admin-Token': obterToken() },
@@ -103,7 +113,11 @@ async function enviarArquivo(tipo) {
         carregarHistorico();
     } catch (erro) {
         adminFeedback.hidden = true;
-        mostrarErro(adminError, `❌ ${erro.message || 'Servidor indisponível.'}`);
+        console.error('[PTW] Falha no upload:', erro);
+        const mensagem = erro instanceof TypeError
+            ? 'Servidor indisponível. Execute iniciar_servidor.bat e abra http://localhost:5000/admin.html.'
+            : erro.message;
+        mostrarErro(adminError, `❌ ${mensagem || 'Erro ao enviar arquivo.'}`);
     } finally {
         document.querySelectorAll('.admin-upload-button').forEach(botao => {
             botao.disabled = !document.querySelector(`.admin-file[data-tipo="${botao.dataset.tipo}"]`).files[0];

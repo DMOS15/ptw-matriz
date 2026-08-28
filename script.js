@@ -3,6 +3,21 @@
 // ============================================================
 
 const BASE_URL = './dados/';
+const API_URL = window.location.protocol === 'file:' ? 'http://localhost:5000' : window.location.origin;
+const ADMIN_TOKEN_KEY = 'ptw_admin_token';
+
+async function verificarServidor() {
+    try {
+        const resposta = await fetch(`${API_URL}/api/status`, { cache: 'no-store' });
+        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+        const dados = await resposta.json();
+        console.info('[PTW] Servidor online:', dados.status, API_URL);
+        return true;
+    } catch (erro) {
+        console.error('[PTW] Servidor indisponível em', API_URL, erro);
+        return false;
+    }
+}
 
 // ============================================================
 // FUNÇÃO PARA CARREGAR DADOS
@@ -112,6 +127,7 @@ function gerarQRCode(qrId) {
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
     atualizarData();
+    verificarServidor();
 
     // Gera QR Codes
     if (document.getElementById('qrIndex')) gerarQRCode('qrIndex');
@@ -508,29 +524,38 @@ function enviarArquivo() {
     };
     const rota = rotas[tipoUpload] || '/api/upload_treinamentos';
     
-    fetch('http://localhost:5000' + rota, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        loading.style.display = 'none';
-        btnEnviar.disabled = false;
-        
-        if (data.sucesso) {
-            alert('✅ ' + data.mensagem);
-            fecharModalUpload();
-            window.location.reload();
-        } else {
-            error.textContent = '❌ ' + data.mensagem;
-            error.style.display = 'block';
+    verificarServidor().then(servidorOnline => {
+        if (!servidorOnline) {
+            throw new Error('Servidor indisponível. Execute iniciar_servidor.bat e abra o sistema por http://localhost:5000.');
         }
-    })
-    .catch(err => {
+        return fetch(`${API_URL}${rota}`, {
+            method: 'POST',
+            headers: { 'X-Admin-Token': sessionStorage.getItem(ADMIN_TOKEN_KEY) || '' },
+            body: formData
+        });
+    }).then(async response => {
+        let data;
+        try {
+            data = await response.json();
+        } catch {
+            throw new Error(`Resposta inválida do servidor (HTTP ${response.status}).`);
+        }
+        if (!response.ok) {
+            throw new Error(data.mensagem || `Servidor respondeu com HTTP ${response.status}.`);
+        }
+        return data;
+    }).then(data => {
+        if (!data.sucesso) throw new Error(data.mensagem || 'O servidor não conseguiu processar o arquivo.');
         loading.style.display = 'none';
         btnEnviar.disabled = false;
-        error.textContent = '❌ Erro ao conectar com o servidor. Certifique-se que o servidor está rodando (python scripts/servidor.py)';
+        alert('✅ ' + data.mensagem);
+        fecharModalUpload();
+        window.location.reload();
+    }).catch(err => {
+        loading.style.display = 'none';
+        btnEnviar.disabled = false;
+        error.textContent = `❌ ${err.message || 'Erro ao enviar arquivo.'}`;
         error.style.display = 'block';
-        console.error('Erro:', err);
+        console.error('[PTW] Falha no upload:', err);
     });
 }
