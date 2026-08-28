@@ -37,6 +37,7 @@
                     <h2>Atualizar arquivos</h2>
                     <p>Os dados públicos são regenerados automaticamente após o processamento.</p>
                 </div>
+                <span id="adminServerStatus" class="servidor-offline">🔴 Offline</span>
                 <button id="logoutButton" class="btn-atualizar btn-secundario" type="button">Sair</button>
             </div>
 
@@ -62,10 +63,37 @@
                     <span class="selected-file" data-arquivo="matriz">Nenhum arquivo selecionado</span>
                     <button class="btn-atualizar admin-upload-button" data-tipo="matriz" type="button" disabled>📤 Enviar matriz</button>
                 </article>
+
+                <article class="admin-upload-card">
+                    <div class="admin-card-icon">👔</div>
+                    <h3>Responsáveis por área</h3>
+                    <p>Atualiza somente a lista de responsáveis pela aba correspondente.</p>
+                    <label class="file-picker">Selecionar Excel (.xlsx)
+                        <input class="admin-file" data-tipo="responsaveis" type="file" accept=".xlsx,.xls" />
+                    </label>
+                    <span class="selected-file" data-arquivo="responsaveis">Nenhum arquivo selecionado</span>
+                    <button class="btn-atualizar admin-upload-button" data-tipo="responsaveis" type="button" disabled>📤 Enviar responsáveis</button>
+                </article>
+
+                <article class="admin-upload-card">
+                    <div class="admin-card-icon">🛡️</div>
+                    <h3>Supervisores</h3>
+                    <p>Atualiza as três categorias de supervisores das abas da matriz.</p>
+                    <label class="file-picker">Selecionar Excel (.xlsx)
+                        <input class="admin-file" data-tipo="supervisores" type="file" accept=".xlsx,.xls" />
+                    </label>
+                    <span class="selected-file" data-arquivo="supervisores">Nenhum arquivo selecionado</span>
+                    <button class="btn-atualizar admin-upload-button" data-tipo="supervisores" type="button" disabled>📤 Enviar supervisores</button>
+                </article>
             </div>
 
+            <div class="progress-wrap" hidden>
+                <div class="progress-label"><span id="progressMessage">Aguardando arquivo...</span><strong id="progressValue">0%</strong></div>
+                <progress id="uploadProgress" value="0" max="100"></progress>
+            </div>
             <div id="adminFeedback" class="upload-loading" hidden></div>
             <div id="adminError" class="upload-error" hidden></div>
+            <div class="admin-count" id="adminCount">Registros processados nesta sessão: 0</div>
 
             <section class="history-section">
                 <div class="admin-toolbar">
@@ -87,11 +115,21 @@
         <footer>
             <div class="footer-left">
                 <img src="imagens/logo-jde.png" alt="JDE" class="logo-footer" />
+                <span>📅 <span id="data-atualizacao">Carregando...</span></span>
+                <span>|</span>
+                <span id="adminServerStatusFooter" class="servidor-offline">🔴 Offline</span>
+                <span>|</span>
+                <span>📌 v4.0</span>
+                <span>|</span>
                 <span>🏢 Matriz PTW</span>
             </div>
-            <div class="footer-right"><button onclick="window.location.href='index.html'" class="btn-atualizar">🏠 Início</button></div>
+            <div class="footer-right">
+                <a href="admin.html" class="btn-voltar">🔐 Admin</a>
+                <button onclick="window.location.href='index.html'" class="btn-atualizar">🏠 Início</button>
+            </div>
         </footer>
     </div>
+    <script src="config.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

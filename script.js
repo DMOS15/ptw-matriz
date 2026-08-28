@@ -140,6 +140,7 @@ function gerarQRCode(qrId) {
 document.addEventListener('DOMContentLoaded', () => {
     atualizarData();
     verificarServidor();
+    setInterval(verificarServidor, 30000);
 
     // Gera QR Codes
     if (document.getElementById('qrIndex')) gerarQRCode('qrIndex');

@@ -12,7 +12,7 @@ PASTA_DADOS = os.path.join(PASTA_RAIZ, 'dados')
 ARQUIVO_TREINAMENTOS = os.path.join(PASTA_RAIZ, 'Treinamentos obrigatórios (SHE-QUALID).xlsx')
 ARQUIVO_MATRIZ = os.path.join(PASTA_RAIZ, 'SHE 10 - B Work Permit Systems-Responsibility.xlsx')
 ARQUIVO_HISTORICO = os.path.join(PASTA_DADOS, 'historico_atualizacoes.json')
-PIN_ADMIN = os.environ.get('PTW_ADMIN_PIN', 'JDEPIU')
+PIN_ADMIN = os.environ.get('PTW_ADMIN_PIN', '1234')
 TOKENS_ADMIN = set()
 
 app = Flask(__name__, static_folder=None)

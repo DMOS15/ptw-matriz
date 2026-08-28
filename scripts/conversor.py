@@ -6,33 +6,43 @@ from pathlib import Path
 # ============================================================
 # CONFIGURAÇÕES
 # ============================================================
-PASTA_JSON = "dados"
 pasta_raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PASTA_JSON = os.path.join(pasta_raiz, "dados")
 ARQUIVO_EXCEL = os.path.join(pasta_raiz, "Treinamentos obrigatórios (SHE-QUALID).xlsx")
 ARQUIVO_MATRIZ = os.path.join(pasta_raiz, "SHE 10 - B Work Permit Systems-Responsibility.xlsx")
 
 # ============================================================
 # ÁREAS DOS SOLICITANTES
 # ============================================================
-AREAS_SOLICITANTES = [
-    "Telhados/Caixas d'agua",
-    "Logística (interno e externo)",
-    "Café Verde",
-    "Manufatura (fornalha ao empacotamento)",
-    "Almoxarifado",
+AREAS_RESPONSAVEIS = [
+    "Telhados/Caixas d'água",
+    "Logística (interno e pátio externo) + Sala de Baterias",
+    "Cavaco, café verde, fornalha, torradores e moagem",
+    "Empacatamento - Fabrimas, Raumak's, Robôs e PKD)",
+    "Almoxarifado comum e embalagens + Almoxarifado Peças - Manutenção",
     "Sala de Inflamáveis",
-    "Tanques de GLP",
-    "Facilites",
-    "DTRS",
+    "Tanque de GLP",
+    "Facilites (Áreas comuns, externas, ADM's, Convivência, Refeitório, Ambulatório, Portaria, Estacionamento",
+    "Central de resíduos, Classe 1 e caixa SAO",
     "Galpão 2",
     "Galpão 3",
-    "subestação elétrica/ geradores/ compressores",
-    "CQ",
-    "Sistema de Proteção e Combate a Incêndio",
-    "Áreas Comuns",
-    "Sala da Manutenção",
-    "Livre Retirada",
+    "Subestação elétrica/ QGBT geradores/ compressores",
+    "ADM Qualidade, CQCV e Shelf-life",
+    "Casa de bombas, caixa dágua de incêndio, painel de emergência, alarmes e hidrantes",
+    "Sala e oficiana da Manutenção",
+    "Livre Retirada - Manutenção (Galpão 2)",
 ]
+
+AREAS_SUPERVISORES = [
+    "Telhados/Caixas d'água", "Logística (interno e externo)", "Café Verde",
+    "Manufatura (fornalha ao empacotamento)", "Almoxarifado", "Sala de Inflamáveis",
+    "Tanques de GLP", "Facilites", "DTRS", "Galpão 2", "Galpão 3",
+    "subestação elétrica/ geradores/ compressores", "CQ",
+    "Sistema de Proteção e Combate a Incêndio", "Áreas Comuns", "Sala da Manutenção",
+    "Livre Retirada"
+]
+
+AREAS_SOLICITANTES = AREAS_SUPERVISORES
 
 # ============================================================
 # FUNÇÃO PARA CONVERTER VALORES
@@ -196,7 +206,9 @@ def converter_responsaveis_excel():
                 continue
             
             areas = []
-            for col in colunas_areas:
+            for col in AREAS_RESPONSAVEIS:
+                if col not in df.columns:
+                    continue
                 valor = str(row.get(col, '')).strip().upper()
                 if valor == 'SIM' or valor == 'X' or valor == '1':
                     areas.append(col)
@@ -234,10 +246,7 @@ def converter_supervisores_excel(aba_nome):
         print(f"   Colunas: {list(df.columns)}")
         
         # Pega os nomes das colunas (áreas) - ignora a primeira coluna que é o nome
-        colunas_areas = []
-        for col in df.columns:
-            if col != 'Nome':
-                colunas_areas.append(col)
+        colunas_areas = [col for col in AREAS_SUPERVISORES if col in df.columns]
         
         dados = []
         for idx, row in df.iterrows():
