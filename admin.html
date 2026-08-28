@@ -25,7 +25,8 @@
             <p>Informe o PIN para liberar as atualizações.</p>
             <form id="loginForm">
                 <label for="pinInput">PIN</label>
-                <input id="pinInput" type="password" autocomplete="current-password" required maxlength="32" />
+                <input id="pinInput" type="password" autocomplete="current-password" inputmode="numeric" placeholder="Digite o PIN" aria-describedby="loginHint" required maxlength="32" />
+                <small id="loginHint">Acesso restrito à administração da Matriz PTW.</small>
                 <button class="btn-atualizar" type="submit">🔓 Entrar</button>
             </form>
             <div id="loginError" class="upload-error" hidden></div>
@@ -37,7 +38,7 @@
                     <h2>Atualizar arquivos</h2>
                     <p>Os dados públicos são regenerados automaticamente após o processamento.</p>
                 </div>
-                <span id="adminServerStatus" class="servidor-offline">🔴 Offline</span>
+                <span id="adminServerStatus" class="servidor-offline" role="status" aria-live="polite">🟡 Verificando...</span>
                 <button id="logoutButton" class="btn-atualizar btn-secundario" type="button">Sair</button>
             </div>
 
@@ -89,7 +90,7 @@
 
             <div class="progress-wrap" hidden>
                 <div class="progress-label"><span id="progressMessage">Aguardando arquivo...</span><strong id="progressValue">0%</strong></div>
-                <progress id="uploadProgress" value="0" max="100"></progress>
+                <progress id="uploadProgress" value="0" max="100" aria-label="Progresso do upload"></progress>
             </div>
             <div id="adminFeedback" class="upload-loading" hidden></div>
             <div id="adminError" class="upload-error" hidden></div>
