@@ -7,6 +7,10 @@ from flask_cors import CORS
 
 from processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, process_matrix
 
+print("=" * 50)
+print("🚀 INICIANDO UPLOAD DA MATRIZ")
+print("=" * 50)
+
 app = Flask(__name__)
 CORS(app)
 
@@ -25,8 +29,10 @@ def atualizar_github(data_dir, message):
 			repository.update_file(path, message, source.read_text(encoding='utf-8'), current.sha, branch=branch)
 
 
-@app.route('/api/upload_matriz', methods=['POST'])
+@app.route('/api/upload_matriz', methods=['POST', 'OPTIONS'])
 def upload_matriz():
+	if request.method == 'OPTIONS':
+		return jsonify({'sucesso': True})
 	if not _token_ok():
 		return _json_error('Acesso administrativo necessário.', 401)
 	arquivo = request.files.get('arquivo')
@@ -43,9 +49,17 @@ def upload_matriz():
 		status = 400 if isinstance(error, ValueError) else 500
 		return _json_error(str(error), status)
 
+
+@app.route('/api/status', methods=['GET'])
+def status():
+	return jsonify({'status': 'online', 'versao': '4.0'})
+
 handler = app
 
 
 if __name__ == '__main__':
 	print("🚀 Servidor rodando em: http://localhost:5001")
+	print("📡 Rotas disponíveis:")
+	print("   POST /api/upload_matriz")
+	print("   GET  /api/status")
 	app.run(debug=True, port=5001)
