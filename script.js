@@ -12,6 +12,33 @@ const API_URL = window.PTW_CONFIG?.apiUrl || (
 );
 const ADMIN_TOKEN_KEY = 'ptw_admin_token';
 
+async function lerRespostaJSON(resposta) {
+    const contentType = resposta.headers.get('content-type') || '';
+    const corpo = await resposta.text();
+
+    if (!corpo.trim()) {
+        if (!resposta.ok && resposta.status >= 500) throw new Error('❌ Erro interno da API.');
+        throw new Error('❌ Resposta inválida da API.');
+    }
+    if (!contentType.toLowerCase().includes('application/json')) {
+        if (!resposta.ok && resposta.status >= 500) throw new Error('❌ Erro interno da API.');
+        throw new Error('❌ Resposta inválida da API.');
+    }
+
+    let dados;
+    try {
+        dados = JSON.parse(corpo);
+    } catch {
+        throw new Error('❌ Resposta inválida da API.');
+    }
+    if (!resposta.ok) {
+        throw new Error(dados.mensagem || (resposta.status >= 500
+            ? '❌ Erro interno da API.'
+            : 'Não foi possível concluir a solicitação.'));
+    }
+    return dados;
+}
+
 async function verificarServidor() {
     try {
         const resposta = await fetch(`${API_URL}/status`, { cache: 'no-store' });
@@ -633,18 +660,7 @@ function enviarArquivo() {
             headers: { 'X-Admin-Token': sessionStorage.getItem(ADMIN_TOKEN_KEY) || '' },
             body: formData
         });
-    }).then(async response => {
-        let data;
-        try {
-            data = await response.json();
-        } catch {
-            throw new Error(`Resposta inválida do servidor (HTTP ${response.status}).`);
-        }
-        if (!response.ok) {
-            throw new Error(data.mensagem || `Servidor respondeu com HTTP ${response.status}.`);
-        }
-        return data;
-    }).then(data => {
+    }).then(response => lerRespostaJSON(response)).then(data => {
         if (!data.sucesso) throw new Error(data.mensagem || 'O servidor não conseguiu processar o arquivo.');
         loading.style.display = 'none';
         atualizarProgressoAdmin(100, 'Concluído!', data.mensagem);
@@ -679,19 +695,20 @@ async function verificarPin() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pin })
         });
-        const dados = await resposta.json();
-        if (!resposta.ok || !dados.sucesso) {
-            throw new Error(dados.mensagem || 'PIN inválido.');
-        }
+        const dados = await lerRespostaJSON(resposta);
+        if (!dados.sucesso) throw new Error(dados.mensagem || 'PIN inválido.');
 
         sessionStorage.setItem(ADMIN_TOKEN_KEY, dados.token);
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('mensagemSucesso').hidden = false;
         campoPin.value = '';
         verificarServidor();
         carregarHistoricoAdmin();
     } catch (erro) {
-        mensagem.textContent = `❌ ${erro.message || 'Não foi possível acessar o servidor.'}`;
+        mensagem.textContent = erro instanceof TypeError
+            ? '❌ Servidor indisponível.'
+            : (erro.message || '❌ Não foi possível acessar o servidor.');
         mensagem.style.display = 'block';
         console.error('[PTW] Falha no login:', erro);
     }
@@ -719,7 +736,7 @@ async function carregarHistoricoAdmin() {
             headers: { 'X-Admin-Token': sessionStorage.getItem(ADMIN_TOKEN_KEY) || '' }
         });
         if (!resposta.ok) throw new Error('Não foi possível carregar o histórico.');
-        const historico = await resposta.json();
+        const historico = await lerRespostaJSON(resposta);
         tabela.innerHTML = historico.length ? historico.map(item => `
             <tr>
                 <td>${new Date(item.data).toLocaleString('pt-BR')}</td>
