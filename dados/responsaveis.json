@@ -81,6 +81,13 @@
     ]
   },
   {
+    "nome": "Caio Ferreira",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "ADM Qualidade, CQCV e Shelf-life"
+    ]
+  },
+  {
     "nome": "Camila Basílio",
     "cargo": "Responsável por Área",
     "areas": [
@@ -116,7 +123,8 @@
     "nome": "Giovanna Biffaratte",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco, café verde, fornalha, torradores e moagem"
+      "Cavaco, café verde, fornalha, torradores e moagem",
+      "Empacatamento - Fabrimas, Raumak's, Robôs e PKD)"
     ]
   },
   {
@@ -135,28 +143,32 @@
     "nome": "Izabella Pugliesi",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco, café verde, fornalha, torradores e moagem"
+      "Cavaco, café verde, fornalha, torradores e moagem",
+      "Empacatamento - Fabrimas, Raumak's, Robôs e PKD)"
     ]
   },
   {
     "nome": "Leonardo Junior",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco, café verde, fornalha, torradores e moagem"
+      "Cavaco, café verde, fornalha, torradores e moagem",
+      "Empacatamento - Fabrimas, Raumak's, Robôs e PKD)"
     ]
   },
   {
     "nome": "Michelle Faria",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco, café verde, fornalha, torradores e moagem"
+      "Cavaco, café verde, fornalha, torradores e moagem",
+      "Empacatamento - Fabrimas, Raumak's, Robôs e PKD)"
     ]
   },
   {
     "nome": "Móises Costa",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco, café verde, fornalha, torradores e moagem"
+      "Cavaco, café verde, fornalha, torradores e moagem",
+      "Empacatamento - Fabrimas, Raumak's, Robôs e PKD)"
     ]
   },
   {
@@ -170,7 +182,8 @@
     "nome": "Relton Moraes",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco, café verde, fornalha, torradores e moagem"
+      "Cavaco, café verde, fornalha, torradores e moagem",
+      "Empacatamento - Fabrimas, Raumak's, Robôs e PKD)"
     ]
   },
   {
@@ -214,6 +227,13 @@
     ]
   },
   {
+    "nome": "Tais Costa",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "ADM Qualidade, CQCV e Shelf-life"
+    ]
+  },
+  {
     "nome": "Talita Campos",
     "cargo": "Responsável por Área",
     "areas": [
@@ -232,6 +252,48 @@
       "Galpãp 2",
       "Galpão 3",
       "Casa de bombas, caixa dágua de incêndio, painel de emergência, alarmes e hidrantes"
+    ]
+  },
+  {
+    "nome": "ANGELA ALVES DOS SANTOS",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Empacatamento - Fabrimas, Raumak's, Robôs e PKD)"
+    ]
+  },
+  {
+    "nome": "RAFAEL DA SILVA SANTOS",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Empacatamento - Fabrimas, Raumak's, Robôs e PKD)"
+    ]
+  },
+  {
+    "nome": "ALICE RAMOS MORAIS",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "ADM Qualidade, CQCV e Shelf-life"
+    ]
+  },
+  {
+    "nome": "THAISSA LEONEL OLIVEIRA",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "ADM Qualidade, CQCV e Shelf-life"
+    ]
+  },
+  {
+    "nome": "ANA LUIZA DE PAULA",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "ADM Qualidade, CQCV e Shelf-life"
+    ]
+  },
+  {
+    "nome": "DEYVIDSON CARLOS PERES DOS SANTOS",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "ADM Qualidade, CQCV e Shelf-life"
     ]
   }
 ]
