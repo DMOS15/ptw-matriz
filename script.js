@@ -142,6 +142,43 @@ function gerarQRCode(qrId) {
     }
 }
 
+function definirTexto(id, valor) {
+    const elemento = document.getElementById(id);
+    if (elemento) elemento.textContent = valor;
+}
+
+function atualizarResumoSolicitantes(dados, prefixo = '') {
+    const validos = dados.filter(item => ['NO PRAZO', 'APROVADO'].includes(item.status)).length;
+    const areas = new Set(dados.flatMap(item => item.areas || []));
+    definirTexto(`${prefixo}SolicitantesTotal`, dados.length);
+    definirTexto(`${prefixo}SolicitantesValidos`, validos);
+    definirTexto(`${prefixo}SolicitantesVencidos`, dados.length - validos);
+    definirTexto(`${prefixo}SolicitantesAreas`, areas.size);
+}
+
+function atualizarResumoResponsaveis(dados, prefixo = '') {
+    const areas = new Set(dados.flatMap(item => item.areas || []));
+    definirTexto(`${prefixo}ResponsaveisTotal`, dados.length);
+    definirTexto(`${prefixo}ResponsaveisAreas`, areas.size);
+}
+
+function carregarResumoHome() {
+    if (!document.getElementById('homeSolicitantesTotal')) return;
+    Promise.all([
+        carregarJSON('solicitantes.json'),
+        carregarJSON('responsaveis.json'),
+        carregarJSON('supervisores_altura.json'),
+        carregarJSON('supervisores_quente.json'),
+        carregarJSON('supervisores_confinado.json')
+    ]).then(([solicitantes, responsaveis, altura, quente, confinado]) => {
+        atualizarResumoSolicitantes(solicitantes, 'home');
+        atualizarResumoResponsaveis(responsaveis, 'home');
+        definirTexto('homeSupervisoresAltura', altura.length);
+        definirTexto('homeSupervisoresQuente', quente.length);
+        definirTexto('homeSupervisoresConfinado', confinado.length);
+    });
+}
+
 // ============================================================
 // EXECUTAR QUANDO A PÁGINA CARREGAR
 // ============================================================
@@ -149,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarData();
     verificarServidor();
     setInterval(verificarServidor, 30000);
+    carregarResumoHome();
 
     // Gera QR Codes
     if (document.getElementById('qrIndex')) gerarQRCode('qrIndex');
@@ -168,6 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             dados = ordenarPorNome(dados);
+            atualizarResumoSolicitantes(dados, 'stats');
 
             const areas = extrairAreas(dados, 'areas');
             const cargos = extrairCargos(dados);
@@ -246,6 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             dados = ordenarPorNome(dados);
+            atualizarResumoResponsaveis(dados, 'stats');
+            definirTexto('statsResponsaveisAtualizacao', new Date().toLocaleDateString('pt-BR'));
 
             const areas = extrairAreas(dados, 'areas');
             popularSelect('filtroAreaResponsaveis', areas);
@@ -312,6 +353,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 'quente': ordenarPorNome(quente || []),
                 'confinado': ordenarPorNome(confinado || [])
             };
+
+            const todasAreas = new Set([...altura, ...quente, ...confinado].flatMap(item => item.areas || []));
+            definirTexto('statsSupervisoresTotal', altura.length + quente.length + confinado.length);
+            definirTexto('statsSupervisoresAreas', todasAreas.size);
 
             let abaAtual = 'altura';
 
@@ -437,6 +482,12 @@ function abrirModalUpload(tipo) {
 
 function fecharModalUpload() {
     document.getElementById('modalUpload').style.display = 'none';
+}
+
+function baixarBackupAtual() {
+    document.querySelectorAll('.backup-group a[download]').forEach((link, index) => {
+        setTimeout(() => link.click(), index * 180);
+    });
 }
 
 document.addEventListener('click', function(event) {
@@ -612,6 +663,7 @@ async function verificarPin() {
         document.getElementById('dashboard').style.display = 'block';
         campoPin.value = '';
         verificarServidor();
+        carregarHistoricoAdmin();
     } catch (erro) {
         mensagem.textContent = `❌ ${erro.message || 'Não foi possível acessar o servidor.'}`;
         mensagem.style.display = 'block';
@@ -631,4 +683,27 @@ function atualizarProgressoAdmin(percentual, mensagem, detalhes = '') {
     if (porcentagem) porcentagem.textContent = `${percentual}%`;
     if (texto) texto.textContent = mensagem;
     if (detalhe) detalhe.textContent = detalhes;
+}
+
+async function carregarHistoricoAdmin() {
+    const tabela = document.getElementById('historicoAdmin');
+    if (!tabela) return;
+    try {
+        const resposta = await fetch(`${API_URL}/admin/historico`, {
+            headers: { 'X-Admin-Token': sessionStorage.getItem(ADMIN_TOKEN_KEY) || '' }
+        });
+        if (!resposta.ok) throw new Error('Não foi possível carregar o histórico.');
+        const historico = await resposta.json();
+        tabela.innerHTML = historico.length ? historico.map(item => `
+            <tr>
+                <td>${new Date(item.data).toLocaleString('pt-BR')}</td>
+                <td>${item.hora || new Date(item.data).toLocaleTimeString('pt-BR')}</td>
+                <td>${item.arquivo || '-'}</td>
+                <td>${item.registros ?? '-'}</td>
+                <td>${item.usuario || 'Admin'}</td>
+                <td><span class="${item.sucesso ? 'status-valido' : 'status-vencido'}">${item.sucesso ? 'Sucesso' : 'Erro'}</span></td>
+            </tr>`).join('') : '<tr><td colspan="6">Nenhuma atualização registrada.</td></tr>';
+    } catch (erro) {
+        tabela.innerHTML = `<tr><td colspan="6">${erro.message}</td></tr>`;
+    }
 }

@@ -5,7 +5,7 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, process_matrix
+from processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_matrix
 
 print("=" * 50)
 print("🚀 INICIANDO UPLOAD DE RESPONSÁVEIS")
@@ -28,6 +28,14 @@ def atualizar_github(data_dir, message):
 			continue
 		current = repository.get_contents(path, ref=branch)
 		repository.update_file(path, message, source.read_text(encoding='utf-8'), current.sha, branch=branch)
+	for source in (data_dir / 'backups').glob('*.json'):
+		path = f'dados/backups/{source.name}'
+		try:
+			current = repository.get_contents(path, ref=branch)
+			repository.update_file(path, message, source.read_text(encoding='utf-8'), current.sha, branch=branch)
+		except Exception:
+			repository.create_file(path, message, source.read_text(encoding='utf-8'), branch=branch)
+		criar_backup_atual()
 
 
 @app.route('/api/upload_responsaveis', methods=['POST', 'OPTIONS'])
@@ -41,6 +49,7 @@ def upload_responsaveis():
 		with tempfile.TemporaryDirectory() as folder:
 			source = Path(folder) / (arquivo.filename if arquivo else 'upload.xlsx')
 			filename = _store_upload(arquivo, source)
+			criar_backup_atual()
 			count, message = process_matrix(source, True, False)
 			atualizar_github(DATA_DIR, 'Atualiza dados PTW: responsáveis')
 		_history('responsaveis', filename, True, message, count)

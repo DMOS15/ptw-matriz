@@ -5,7 +5,7 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, process_training
+from processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_training
 
 print("=" * 50)
 print("🚀 INICIANDO UPLOAD DE TREINAMENTOS")
@@ -29,6 +29,13 @@ def atualizar_github(data_dir, message):
 		content = source.read_text(encoding='utf-8')
 		current = repository.get_contents(path, ref=branch)
 		repository.update_file(path, message, content, current.sha, branch=branch)
+	for source in (data_dir / 'backups').glob('*.json'):
+		path = f'dados/backups/{source.name}'
+		try:
+			current = repository.get_contents(path, ref=branch)
+			repository.update_file(path, message, source.read_text(encoding='utf-8'), current.sha, branch=branch)
+		except Exception:
+			repository.create_file(path, message, source.read_text(encoding='utf-8'), branch=branch)
 
 
 @app.route('/api/upload_treinamentos', methods=['POST', 'OPTIONS'])
@@ -42,6 +49,7 @@ def upload_treinamentos():
 		with tempfile.TemporaryDirectory() as folder:
 			source = Path(folder) / (arquivo.filename if arquivo else 'upload.xlsx')
 			filename = _store_upload(arquivo, source)
+			criar_backup_atual()
 			count, message = process_training(source)
 			atualizar_github(DATA_DIR, 'Atualiza dados PTW: treinamentos')
 		_history('treinamentos', filename, True, message, count)

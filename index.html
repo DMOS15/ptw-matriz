@@ -8,66 +8,65 @@
 </head>
 <body>
     <div class="container">
-        <header>
+        <header class="site-header">
             <div class="header-top">
                 <img src="imagens/logo-jde.png" alt="JDE Logo" class="logo-jde" />
                 <div>
-                    <h1>📋 Matriz PTW</h1>
-                    <p>Sistema de consulta de autorizações para trabalho</p>
+                    <p class="eyebrow">Portal interno de segurança</p>
+                    <h1>Matriz PTW</h1>
+                    <p>Sistema de Consulta de Autorizações para Trabalho</p>
                 </div>
+            </div>
+            <div class="header-meta">
+                <span id="status-servidor" class="status-pill status-pending">Verificando API</span>
+                <span><strong>v4.0</strong> · <span id="data-atualizacao">Carregando...</span></span>
             </div>
         </header>
 
         <main class="menu-principal">
-            <div class="card-menu" onclick="window.location.href='solicitantes.html'">
-                <div class="icon">👤</div>
+            <div class="card-menu card-solicitantes">
+                <div class="card-menu-top"><div class="icon">👤</div><span class="card-kicker">Pessoas autorizadas</span></div>
                 <h2>Solicitantes</h2>
-                <p>Colaboradores autorizados a solicitar PTW</p>
-                <span class="badge">Ativos com treinamento válido</span>
+                <p>Colaboradores autorizados a solicitar PTW.</p>
+                <div class="card-metrics">
+                    <div><strong id="homeSolicitantesTotal">--</strong><span>Total de colaboradores</span></div>
+                    <div><strong id="homeSolicitantesValidos">--</strong><span>Treinamentos válidos</span></div>
+                    <div><strong id="homeSolicitantesVencidos">--</strong><span>Treinamentos vencidos</span></div>
+                </div>
+                <a class="card-action" href="solicitantes.html">Acessar <span aria-hidden="true">→</span></a>
             </div>
 
-            <div class="card-menu" onclick="window.location.href='responsaveis.html'">
-                <div class="icon">👔</div>
+            <div class="card-menu card-responsaveis">
+                <div class="card-menu-top"><div class="icon">👔</div><span class="card-kicker">Governança de área</span></div>
                 <h2>Responsáveis por Área</h2>
-                <p>Gestores responsáveis por cada área</p>
-                <span class="badge">Áreas e responsáveis</span>
+                <p>Gestores responsáveis pela autorização de cada área.</p>
+                <div class="card-metrics card-metrics-2">
+                    <div><strong id="homeResponsaveisTotal">--</strong><span>Responsáveis</span></div>
+                    <div><strong id="homeResponsaveisAreas">--</strong><span>Áreas cobertas</span></div>
+                </div>
+                <a class="card-action" href="responsaveis.html">Acessar <span aria-hidden="true">→</span></a>
             </div>
 
-            <div class="card-menu" onclick="window.location.href='supervisores.html'">
-                <div class="icon">🛡️</div>
+            <div class="card-menu card-supervisores">
+                <div class="card-menu-top"><div class="icon">🛡️</div><span class="card-kicker">Supervisão especializada</span></div>
                 <h2>Supervisores</h2>
-                <p>Supervisores de trabalho em altura, quente e confinado</p>
-                <span class="badge">3 categorias</span>
-            </div>
-
-            <div class="card-menu card-admin" onclick="window.location.href='admin.html'">
-                <div class="icon">⚙️</div>
-                <h2>Administração</h2>
-                <p>Atualizar arquivos e consultar o histórico</p>
-                <span class="badge">Acesso protegido</span>
+                <p>Supervisores habilitados para atividades críticas.</p>
+                <div class="card-metrics">
+                    <div><strong id="homeSupervisoresAltura">--</strong><span>Altura</span></div>
+                    <div><strong id="homeSupervisoresQuente">--</strong><span>Quente</span></div>
+                    <div><strong id="homeSupervisoresConfinado">--</strong><span>Confinado</span></div>
+                </div>
+                <a class="card-action" href="supervisores.html">Acessar <span aria-hidden="true">→</span></a>
             </div>
         </main>
 
-        <!-- QR Code Central -->
-        <div class="qr-code-central">
-            <p>📱 Escaneie o QR Code para acessar esta página</p>
-            <img id="qrIndex" src="" alt="QR Code" />
-        </div>
-
-        <footer>
+        <footer class="corporate-footer">
             <div class="footer-left">
-                <img src="imagens/logo-jde.png" alt="JDE" class="logo-footer" />
-                <span>📅 <span id="data-atualizacao">Carregando...</span></span>
-                <span>|</span>
-                <span id="status-servidor">🟡 Verificando servidor...</span>
-                <span>|</span>
-                <span>📌 Versão 4.0</span>
-                <span>|</span>
-                <span>🏢 Matriz PTW</span>
+                <img id="qrIndex" src="" alt="QR Code para acessar a Matriz PTW" class="footer-qr" />
+                <span><strong>Escaneie para acessar a Matriz PTW</strong><small>Acesso rápido pelo celular</small></span>
             </div>
             <div class="footer-right">
-                <a href="admin.html" class="btn-voltar">🔐 Admin</a>
-                <button onclick="atualizarDados()" class="btn-atualizar">🔄 Recarregar</button>
+                <a href="admin.html" class="footer-admin-link">🔒 Administração</a>
             </div>
         </footer>
     </div>

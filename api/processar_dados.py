@@ -18,6 +18,13 @@ BLOCK_MINUTES = 5
 LOGIN_FAILURES = {}
 HISTORY_FILE = Path(tempfile.gettempdir()) / 'ptw_historico_atualizacoes.json'
 TOKEN_SECRET = os.environ.get('PTW_TOKEN_SECRET', 'ptw-development-secret-change-me')
+JSON_FILES = (
+    'solicitantes.json',
+    'responsaveis.json',
+    'supervisores_altura.json',
+    'supervisores_quente.json',
+    'supervisores_confinado.json'
+)
 
 import conversor
 
@@ -40,17 +47,20 @@ def _token_ok():
 
 
 def _history(tipo, filename, success, message, count=0):
+    now = datetime.now()
     try:
         entries = json.loads(HISTORY_FILE.read_text(encoding='utf-8')) if HISTORY_FILE.exists() else []
     except (OSError, json.JSONDecodeError):
         entries = []
     entries.insert(0, {
-        'data': datetime.now().isoformat(timespec='seconds'),
+        'data': now.isoformat(timespec='seconds'),
+        'hora': now.strftime('%H:%M:%S'),
         'tipo': tipo,
         'arquivo': filename,
         'sucesso': success,
         'mensagem': message,
-        'registros': count
+        'registros': count,
+        'usuario': 'Admin'
     })
     try:
         HISTORY_FILE.write_text(json.dumps(entries[:100], ensure_ascii=False, indent=2), encoding='utf-8')
@@ -71,6 +81,45 @@ def _store_upload(file, destination):
     destination.parent.mkdir(exist_ok=True)
     file.save(destination)
     return file.filename
+
+
+def _github_repository():
+    from github import Github
+    token = os.environ.get('GITHUB_TOKEN')
+    if not token:
+        return None, None
+    repository = Github(token).get_repo(os.environ.get('GITHUB_REPOSITORY', 'DMOS15/ptw-matriz'))
+    return repository, os.environ.get('GITHUB_BRANCH', 'main')
+
+
+def criar_backup_atual():
+    """Copia os JSON publicados antes de qualquer processamento novo."""
+    backup_dir = DATA_DIR / 'backups'
+    backup_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime('%Y-%m-%d_%H%M%S')
+    repository, branch = _github_repository()
+    criados = []
+
+    for filename in JSON_FILES:
+        content = None
+        if repository:
+            try:
+                content = repository.get_contents(f'dados/{filename}', ref=branch).decoded_content.decode('utf-8')
+            except Exception:
+                content = None
+        if content is None:
+            local_file = ROOT / 'dados' / filename
+            if local_file.exists():
+                content = local_file.read_text(encoding='utf-8')
+        if content is None:
+            continue
+        target = backup_dir / f'backup_{timestamp}_{filename}'
+        target.write_text(content, encoding='utf-8')
+        criados.append(target)
+
+    if not criados:
+        raise RuntimeError('Não foi possível localizar os JSON atuais para criar o backup.')
+    return criados
 
 
 def process_training(source):

@@ -8,12 +8,13 @@
 </head>
 <body>
     <div class="container">
-        <header>
+        <header class="site-header">
             <div class="header-top">
                 <img src="imagens/logo-jde.png" alt="JDE Logo" class="logo-jde" />
                 <div>
-                    <h1>🔐 Área Administrativa</h1>
-                    <p>Atualização da Matriz PTW</p>
+                    <p class="eyebrow">Controle de dados</p>
+                    <h1>Área Administrativa</h1>
+                    <p>Atualização segura da Matriz PTW</p>
                 </div>
             </div>
             <a href="index.html" class="btn-voltar">← Voltar</a>
@@ -29,28 +30,58 @@
             </div>
         </div>
 
-        <div id="dashboard" style="display:none;">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:20px 0;">
-                <div style="background:#f8f9fa;padding:20px;border-radius:12px;text-align:center;">
+        <div id="dashboard" class="admin-dashboard" style="display:none;">
+            <div class="admin-overview">
+                <div class="admin-overview-card">
                     <div id="statusServidor" style="font-size:1.2rem;">🟡 Verificando...</div>
-                    <small style="color:#7f8c8d;">Servidor</small>
+                    <small>Servidor</small>
                 </div>
-                <div style="background:#f8f9fa;padding:20px;border-radius:12px;text-align:center;">
-                    <div id="contadorRegistros">0</div>
-                    <small style="color:#7f8c8d;">Registros</small>
+                <div class="admin-overview-card">
+                    <div id="contadorRegistros">Dados PTW</div>
+                    <small>Base de registros</small>
                 </div>
-                <div style="background:#f8f9fa;padding:20px;border-radius:12px;text-align:center;">
+                <div class="admin-overview-card">
                     <div id="ultimaAtualizacao">-</div>
-                    <small style="color:#7f8c8d;">Última atualização</small>
+                    <small>Última atualização</small>
                 </div>
             </div>
 
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin:20px 0;">
-                <button onclick="abrirModalUpload('treinamentos')" class="btn-atualizar" style="background:#27ae60;padding:15px;">📤 Upload Treinamentos</button>
-                <button onclick="abrirModalUpload('responsaveis')" class="btn-atualizar" style="background:#e67e22;padding:15px;">📤 Upload Responsáveis</button>
-                <button onclick="abrirModalUpload('supervisores')" class="btn-atualizar" style="background:#8e44ad;padding:15px;">📤 Upload Supervisores</button>
-                <button onclick="abrirModalUpload('matriz')" class="btn-atualizar" style="background:#2c3e50;padding:15px;">📤 Upload Matriz</button>
+            <div class="admin-upload-grid">
+                <article class="admin-upload-card admin-card-green">
+                    <span class="admin-card-label">Atualização individual</span>
+                    <h3>Treinamentos PTW</h3>
+                    <p>Atualiza o arquivo <strong>solicitantes.json</strong>.</p>
+                    <button onclick="abrirModalUpload('treinamentos')" class="btn-atualizar">Selecionar XLSX <span>→</span></button>
+                </article>
+                <article class="admin-upload-card admin-card-copper">
+                    <span class="admin-card-label">Atualização integrada</span>
+                    <h3>Responsáveis e Supervisores</h3>
+                    <p>Atualiza responsáveis e as três categorias de supervisores.</p>
+                    <div class="admin-card-actions">
+                        <button onclick="abrirModalUpload('responsaveis')" class="btn-atualizar">Responsáveis</button>
+                        <button onclick="abrirModalUpload('supervisores')" class="btn-atualizar">Supervisores</button>
+                        <button onclick="abrirModalUpload('matriz')" class="btn-atualizar">Matriz completa <span>→</span></button>
+                    </div>
+                </article>
             </div>
+
+            <section class="backup-panel">
+                <div class="section-heading">
+                    <div><span class="eyebrow">Proteção antes da atualização</span><h2>Backup e Arquivos Atuais</h2></div>
+                    <button type="button" class="backup-download-all" onclick="baixarBackupAtual()">📥 Baixar Backup Atual</button>
+                </div>
+                <p class="backup-warning">Recomendamos baixar os arquivos atuais antes de realizar alterações.</p>
+                <div class="backup-groups">
+                    <div class="backup-group"><strong>Solicitantes</strong><a href="dados/solicitantes.json" download="solicitantes.json">📥 Baixar solicitantes.json</a></div>
+                    <div class="backup-group"><strong>Responsáveis</strong><a href="dados/responsaveis.json" download="responsaveis.json">📥 Baixar responsaveis.json</a></div>
+                    <div class="backup-group"><strong>Supervisores</strong><a href="dados/supervisores_altura.json" download="supervisores_altura.json">📥 Supervisores Altura</a><a href="dados/supervisores_quente.json" download="supervisores_quente.json">📥 Supervisores Quente</a><a href="dados/supervisores_confinado.json" download="supervisores_confinado.json">📥 Supervisores Confinado</a></div>
+                </div>
+            </section>
+
+            <section class="history-panel">
+                <div class="section-heading"><div><span class="eyebrow">Rastreabilidade</span><h2>Histórico de atualizações</h2></div><button onclick="carregarHistoricoAdmin()" class="btn-secundario">Atualizar</button></div>
+                <div class="tabela-container"><table><thead><tr><th>Data</th><th>Hora</th><th>Arquivo enviado</th><th>Registros</th><th>Usuário</th><th>Status</th></tr></thead><tbody id="historicoAdmin"><tr><td colspan="6">Faça login para carregar o histórico.</td></tr></tbody></table></div>
+            </section>
 
             <div id="uploadProgresso" style="display:none;margin:20px 0;padding:20px;background:#f8f9fa;border-radius:12px;">
                 <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
