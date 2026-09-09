@@ -26,7 +26,10 @@ JSON_FILES = (
     'supervisores_confinado.json'
 )
 
-from api import conversor
+try:
+    from api import conversor
+except ImportError:
+    import conversor
 
 app = Flask(__name__)
 CORS(app)
