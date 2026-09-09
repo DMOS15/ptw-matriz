@@ -62,8 +62,11 @@
 
         <footer class="corporate-footer">
             <div class="footer-left">
-                <img id="qrIndex" src="" alt="QR Code para acessar a Matriz PTW" class="footer-qr" />
-                <span><strong>Escaneie para acessar a Matriz PTW</strong><small>Acesso rápido pelo celular</small></span>
+                <div class="footer-qr-block">
+                    <img id="qrIndex" src="" alt="QR Code para acessar a Matriz PTW" class="footer-qr" />
+                    <span><strong>Escaneie para acessar a Matriz PTW</strong><small>Acesso rápido pelo celular</small></span>
+                    <button type="button" id="btnBaixarQrIndex" class="footer-qr-download" onclick="baixarQRCode('qrIndex')">📥 Baixar QR Code</button>
+                </div>
             </div>
             <div class="footer-right">
                 <a href="admin.html" class="footer-admin-link">🔒 Administração</a>

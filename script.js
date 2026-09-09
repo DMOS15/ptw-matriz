@@ -142,6 +142,32 @@ function gerarQRCode(qrId) {
     }
 }
 
+async function baixarQRCode(qrId) {
+    const qrImg = document.getElementById(qrId);
+    if (!qrImg || !qrImg.src) return;
+
+    try {
+        const resposta = await fetch(qrImg.src);
+        if (!resposta.ok) throw new Error('Não foi possível baixar o QR Code.');
+        const blob = await resposta.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'QRCode_Matriz_PTW.png';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    } catch (erro) {
+        const link = document.createElement('a');
+        link.href = qrImg.src;
+        link.download = 'QRCode_Matriz_PTW.png';
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.click();
+    }
+}
+
 function definirTexto(id, valor) {
     const elemento = document.getElementById(id);
     if (elemento) elemento.textContent = valor;
