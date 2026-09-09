@@ -99,12 +99,16 @@ def converter_responsaveis(source):
 
 def converter_supervisores(source):
     result = {}
-    for sheet, filename in [
-        ('SUPERVISOR TRABALHO EM ALTURA', 'supervisores_altura.json'),
-        ('SUPERVISOR TRABALHO A QUENTE', 'supervisores_quente.json'),
-        ('SUPERVISOR TRABALHO CONFINADO', 'supervisores_confinado.json')
+    for sheets, filename in [
+        (('SUPERVISOR TRABALHO ALTURA', 'SUPERVISOR TRABALHO EM ALTURA', 'Supervisor de Trabalho a Altura'), 'supervisores_altura.json'),
+        (('SUPERVISOR TRABALHO QUENTE', 'SUPERVISOR TRABALHO A QUENTE', 'Supervisor de Trabalho Quente'), 'supervisores_quente.json'),
+        (('SUPERVISOR TRABALHO CONFINADO',), 'supervisores_confinado.json')
     ]:
-        df = pd.read_excel(source, sheet_name=sheet, dtype=str).fillna('')
+        with pd.ExcelFile(source) as excel:
+            sheet = next((nome for nome in sheets if nome in excel.sheet_names), None)
+            if sheet is None:
+                raise ValueError(f'Nenhuma aba encontrada para {filename}: {", ".join(sheets)}.')
+            df = pd.read_excel(excel, sheet_name=sheet, dtype=str).fillna('')
         nome_coluna = 'Nome' if 'Nome' in df.columns else df.columns[0]
         areas = [area for area in AREAS_SUPERVISORES if area in df.columns]
         data = []

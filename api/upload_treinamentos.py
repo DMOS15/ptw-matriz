@@ -5,7 +5,10 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_training
+try:
+	from api.processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_training
+except ImportError:
+	from processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_training
 
 print("=" * 50)
 print("🚀 INICIANDO UPLOAD DE TREINAMENTOS")
