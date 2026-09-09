@@ -42,8 +42,7 @@ async function lerRespostaJSON(resposta) {
 async function verificarServidor() {
     try {
         const resposta = await fetch(`${API_URL}/status`, { cache: 'no-store' });
-        if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
-        const dados = await resposta.json();
+        const dados = await lerRespostaJSON(resposta);
         console.info('[PTW] Servidor online:', dados.status, API_URL);
         const status = document.getElementById('status-servidor');
         if (status) {
