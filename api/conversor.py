@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -41,6 +42,10 @@ def text(value):
 
 def selected(value):
     return text(value).upper() in {'SIM', 'X', '1', 'TRUE', 'VERDADEIRO'}
+
+
+def normalizar_nome_area(value):
+    return re.sub(r'\s+', ' ', text(value)).strip().casefold()
 
 
 def _write(name, data):
@@ -87,10 +92,15 @@ def converter_treinamentos(source):
 def converter_responsaveis(source):
     df = pd.read_excel(source, sheet_name='RESPONSAVEIS DE AREA', dtype=str).fillna('')
     nome_coluna = 'Responsáveis pela área' if 'Responsáveis pela área' in df.columns else 'Nome'
+    colunas_area = {normalizar_nome_area(coluna): coluna for coluna in df.columns}
     data = []
     for _, row in df.iterrows():
         nome = text(row.get(nome_coluna, ''))
-        areas = [area for area in AREAS_RESPONSAVEIS if area in df.columns and selected(row.get(area, ''))]
+        areas = [
+            area for area in AREAS_RESPONSAVEIS
+            if (coluna := colunas_area.get(normalizar_nome_area(area)))
+            and selected(row.get(coluna, ''))
+        ]
         if nome and areas:
             data.append({'nome': nome, 'cargo': 'Responsável por Área', 'areas': areas})
     _write('responsaveis.json', data)
