@@ -4,48 +4,59 @@
     "cargo": "Responsável por Área",
     "areas": [
       "Sala de Inflamáveis",
-      "Tanque de GLP"
+      "Facilites (Áreas comuns, externas, ADM's, Convivência, Refeitório, Ambulatório, Portaria, Estacionamento",
+      "Galpãp 2",
+      "Galpão 3"
     ]
   },
   {
     "nome": "Andre Costa",
     "cargo": "Responsável por Área",
     "areas": [
-      "Almoxarifado",
+      "Almoxarifado comum e embalagens + Almoxarifado Peças - Manutenção",
       "Sala de Inflamáveis",
-      "Tanque de GLP"
+      "Tanque de GLP",
+      "Subestação elétrica/ QGBT geradores/ compressores",
+      "Sala e oficiana da Manutenção",
+      "Livre Retirada - Manutenção (Galpão 2)"
     ]
   },
   {
     "nome": "Eliezer Silva",
     "cargo": "Responsável por Área",
     "areas": [
-      "Almoxarifado",
+      "Almoxarifado comum e embalagens + Almoxarifado Peças - Manutenção",
       "Sala de Inflamáveis",
-      "Tanque de GLP"
+      "Tanque de GLP",
+      "Subestação elétrica/ QGBT geradores/ compressores",
+      "Sala e oficiana da Manutenção",
+      "Livre Retirada - Manutenção (Galpão 2)"
     ]
   },
   {
     "nome": "Henrique Cardoso",
     "cargo": "Responsável por Área",
     "areas": [
-      "Almoxarifado",
+      "Almoxarifado comum e embalagens + Almoxarifado Peças - Manutenção",
       "Sala de Inflamáveis",
-      "Tanque de GLP"
+      "Tanque de GLP",
+      "Subestação elétrica/ QGBT geradores/ compressores",
+      "Sala e oficiana da Manutenção",
+      "Livre Retirada - Manutenção (Galpão 2)"
     ]
   },
   {
     "nome": "Igor Sousa",
     "cargo": "Responsável por Área",
     "areas": [
-      "ADM Qualidade"
+      "Subestação elétrica/ QGBT geradores/ compressores"
     ]
   },
   {
     "nome": "Pedro Coelho",
     "cargo": "Responsável por Área",
     "areas": [
-      "Almoxarifado",
+      "Almoxarifado comum e embalagens + Almoxarifado Peças - Manutenção",
       "Sala de Inflamáveis"
     ]
   },
@@ -53,7 +64,7 @@
     "nome": "Ana Martins",
     "cargo": "Responsável por Área",
     "areas": [
-      "Almoxarifado",
+      "Almoxarifado comum e embalagens + Almoxarifado Peças - Manutenção",
       "Sala de Inflamáveis"
     ]
   },
@@ -61,25 +72,20 @@
     "nome": "Aline Fernandes",
     "cargo": "Responsável por Área",
     "areas": [
-      "Almoxarifado",
+      "Almoxarifado comum e embalagens + Almoxarifado Peças - Manutenção",
       "Sala de Inflamáveis",
       "Tanque de GLP",
-      "Facilites"
-    ]
-  },
-  {
-    "nome": "Caio Ferreira",
-    "cargo": "Responsável por Área",
-    "areas": [
-      "Casa de bombas"
+      "Facilites (Áreas comuns, externas, ADM's, Convivência, Refeitório, Ambulatório, Portaria, Estacionamento",
+      "Galpãp 2",
+      "Galpão 3"
     ]
   },
   {
     "nome": "Camila Basílio",
     "cargo": "Responsável por Área",
     "areas": [
-      "Facilites",
-      "Galpão 2",
+      "Facilites (Áreas comuns, externas, ADM's, Convivência, Refeitório, Ambulatório, Portaria, Estacionamento",
+      "Galpãp 2",
       "Galpão 3"
     ]
   },
@@ -87,8 +93,8 @@
     "nome": "Cristina Aparecida Silva",
     "cargo": "Responsável por Área",
     "areas": [
-      "Facilites",
-      "Galpão 2",
+      "Facilites (Áreas comuns, externas, ADM's, Convivência, Refeitório, Ambulatório, Portaria, Estacionamento",
+      "Galpãp 2",
       "Galpão 3"
     ]
   },
@@ -96,87 +102,82 @@
     "nome": "Fábio Oliveira",
     "cargo": "Responsável por Área",
     "areas": [
-      "Logística"
+      "Logística (interno e pátio externo) + Sala de Baterias"
     ]
   },
   {
     "nome": "Gian Silva",
     "cargo": "Responsável por Área",
     "areas": [
-      "Logística"
+      "Logística (interno e pátio externo) + Sala de Baterias"
     ]
   },
   {
     "nome": "Giovanna Biffaratte",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco",
-      "Empacotamento"
+      "Cavaco, café verde, fornalha, torradores e moagem"
     ]
   },
   {
     "nome": "Guilherme Oliveira",
     "cargo": "Responsável por Área",
     "areas": [
-      "Telhados",
-      "Facilites",
-      "Galpão 2",
+      "Telhados/Caixas d'água",
+      "Facilites (Áreas comuns, externas, ADM's, Convivência, Refeitório, Ambulatório, Portaria, Estacionamento",
+      "Central de resíduos, Classe 1 e caixa SAO",
+      "Galpãp 2",
       "Galpão 3",
-      "Manutenção"
+      "Casa de bombas, caixa dágua de incêndio, painel de emergência, alarmes e hidrantes"
     ]
   },
   {
     "nome": "Izabella Pugliesi",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco",
-      "Empacotamento"
+      "Cavaco, café verde, fornalha, torradores e moagem"
     ]
   },
   {
     "nome": "Leonardo Junior",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco",
-      "Empacotamento"
+      "Cavaco, café verde, fornalha, torradores e moagem"
     ]
   },
   {
     "nome": "Michelle Faria",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco",
-      "Empacotamento"
+      "Cavaco, café verde, fornalha, torradores e moagem"
     ]
   },
   {
-    "nome": "Moises Costa",
+    "nome": "Móises Costa",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco",
-      "Empacotamento"
+      "Cavaco, café verde, fornalha, torradores e moagem"
     ]
   },
   {
     "nome": "Rafael Souza",
     "cargo": "Responsável por Área",
     "areas": [
-      "Logística"
+      "Logística (interno e pátio externo) + Sala de Baterias"
     ]
   },
   {
     "nome": "Relton Moraes",
     "cargo": "Responsável por Área",
     "areas": [
-      "Cavaco",
-      "Empacotamento"
+      "Cavaco, café verde, fornalha, torradores e moagem"
     ]
   },
   {
     "nome": "Rubens Teixeira",
     "cargo": "Responsável por Área",
     "areas": [
-      "Galpão 2",
+      "Galpãp 2",
       "Galpão 3"
     ]
   },
@@ -184,7 +185,7 @@
     "nome": "Ruth Ribeiro",
     "cargo": "Responsável por Área",
     "areas": [
-      "Galpão 2",
+      "Galpãp 2",
       "Galpão 3"
     ]
   },
@@ -192,37 +193,31 @@
     "nome": "Samuel Camargos",
     "cargo": "Responsável por Área",
     "areas": [
-      "Telhados",
-      "Facilites",
-      "Galpão 2",
+      "Telhados/Caixas d'água",
+      "Facilites (Áreas comuns, externas, ADM's, Convivência, Refeitório, Ambulatório, Portaria, Estacionamento",
+      "Central de resíduos, Classe 1 e caixa SAO",
+      "Galpãp 2",
       "Galpão 3",
-      "Manutenção"
+      "Casa de bombas, caixa dágua de incêndio, painel de emergência, alarmes e hidrantes"
     ]
   },
   {
     "nome": "Sarah Teixeira",
     "cargo": "Responsável por Área",
     "areas": [
-      "Almoxarifado",
+      "Almoxarifado comum e embalagens + Almoxarifado Peças - Manutenção",
       "Sala de Inflamáveis",
       "Tanque de GLP",
-      "Facilites",
-      "Galpão 2",
+      "Facilites (Áreas comuns, externas, ADM's, Convivência, Refeitório, Ambulatório, Portaria, Estacionamento",
+      "Galpãp 2",
       "Galpão 3"
-    ]
-  },
-  {
-    "nome": "Tais Costa",
-    "cargo": "Responsável por Área",
-    "areas": [
-      "Casa de bombas"
     ]
   },
   {
     "nome": "Talita Campos",
     "cargo": "Responsável por Área",
     "areas": [
-      "Almoxarifado",
+      "Almoxarifado comum e embalagens + Almoxarifado Peças - Manutenção",
       "Sala de Inflamáveis",
       "Tanque de GLP"
     ]
@@ -231,53 +226,12 @@
     "nome": "Tiago Carvalho",
     "cargo": "Responsável por Área",
     "areas": [
-      "Telhados",
-      "Facilites",
-      "Galpão 2",
+      "Telhados/Caixas d'água",
+      "Facilites (Áreas comuns, externas, ADM's, Convivência, Refeitório, Ambulatório, Portaria, Estacionamento",
+      "Central de resíduos, Classe 1 e caixa SAO",
+      "Galpãp 2",
       "Galpão 3",
-      "Manutenção"
-    ]
-  },
-  {
-    "nome": "Angela Santos",
-    "cargo": "Responsável por Área",
-    "areas": [
-      "Empacotamento"
-    ]
-  },
-  {
-    "nome": "Rafael Santos",
-    "cargo": "Responsável por Área",
-    "areas": [
-      "Logística"
-    ]
-  },
-  {
-    "nome": "Alice Ramos Morais",
-    "cargo": "Responsável por Área",
-    "areas": [
-      "Manutenção"
-    ]
-  },
-  {
-    "nome": "Thaissa Leonel Oliveira",
-    "cargo": "Responsável por Área",
-    "areas": [
-      "Manutenção"
-    ]
-  },
-  {
-    "nome": "Ana Luiza de Paula",
-    "cargo": "Responsável por Área",
-    "areas": [
-      "Manutenção"
-    ]
-  },
-  {
-    "nome": "Deyvidson Carlos Peres dos Santos",
-    "cargo": "Responsável por Área",
-    "areas": [
-      "Manutenção"
+      "Casa de bombas, caixa dágua de incêndio, painel de emergência, alarmes e hidrantes"
     ]
   }
 ]
