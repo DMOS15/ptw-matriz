@@ -1,0 +1,283 @@
+[
+  {
+    "nome": "Ana Pereira",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Sala de Inflamáveis",
+      "Tanque de GLP"
+    ]
+  },
+  {
+    "nome": "Andre Costa",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Almoxarifado",
+      "Sala de Inflamáveis",
+      "Tanque de GLP"
+    ]
+  },
+  {
+    "nome": "Eliezer Silva",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Almoxarifado",
+      "Sala de Inflamáveis",
+      "Tanque de GLP"
+    ]
+  },
+  {
+    "nome": "Henrique Cardoso",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Almoxarifado",
+      "Sala de Inflamáveis",
+      "Tanque de GLP"
+    ]
+  },
+  {
+    "nome": "Igor Sousa",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "ADM Qualidade"
+    ]
+  },
+  {
+    "nome": "Pedro Coelho",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Almoxarifado",
+      "Sala de Inflamáveis"
+    ]
+  },
+  {
+    "nome": "Ana Martins",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Almoxarifado",
+      "Sala de Inflamáveis"
+    ]
+  },
+  {
+    "nome": "Aline Fernandes",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Almoxarifado",
+      "Sala de Inflamáveis",
+      "Tanque de GLP",
+      "Facilites"
+    ]
+  },
+  {
+    "nome": "Caio Ferreira",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Casa de bombas"
+    ]
+  },
+  {
+    "nome": "Camila Basílio",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Facilites",
+      "Galpão 2",
+      "Galpão 3"
+    ]
+  },
+  {
+    "nome": "Cristina Aparecida Silva",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Facilites",
+      "Galpão 2",
+      "Galpão 3"
+    ]
+  },
+  {
+    "nome": "Fábio Oliveira",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Logística"
+    ]
+  },
+  {
+    "nome": "Gian Silva",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Logística"
+    ]
+  },
+  {
+    "nome": "Giovanna Biffaratte",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Cavaco",
+      "Empacotamento"
+    ]
+  },
+  {
+    "nome": "Guilherme Oliveira",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Telhados",
+      "Facilites",
+      "Galpão 2",
+      "Galpão 3",
+      "Manutenção"
+    ]
+  },
+  {
+    "nome": "Izabella Pugliesi",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Cavaco",
+      "Empacotamento"
+    ]
+  },
+  {
+    "nome": "Leonardo Junior",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Cavaco",
+      "Empacotamento"
+    ]
+  },
+  {
+    "nome": "Michelle Faria",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Cavaco",
+      "Empacotamento"
+    ]
+  },
+  {
+    "nome": "Moises Costa",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Cavaco",
+      "Empacotamento"
+    ]
+  },
+  {
+    "nome": "Rafael Souza",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Logística"
+    ]
+  },
+  {
+    "nome": "Relton Moraes",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Cavaco",
+      "Empacotamento"
+    ]
+  },
+  {
+    "nome": "Rubens Teixeira",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Galpão 2",
+      "Galpão 3"
+    ]
+  },
+  {
+    "nome": "Ruth Ribeiro",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Galpão 2",
+      "Galpão 3"
+    ]
+  },
+  {
+    "nome": "Samuel Camargos",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Telhados",
+      "Facilites",
+      "Galpão 2",
+      "Galpão 3",
+      "Manutenção"
+    ]
+  },
+  {
+    "nome": "Sarah Teixeira",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Almoxarifado",
+      "Sala de Inflamáveis",
+      "Tanque de GLP",
+      "Facilites",
+      "Galpão 2",
+      "Galpão 3"
+    ]
+  },
+  {
+    "nome": "Tais Costa",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Casa de bombas"
+    ]
+  },
+  {
+    "nome": "Talita Campos",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Almoxarifado",
+      "Sala de Inflamáveis",
+      "Tanque de GLP"
+    ]
+  },
+  {
+    "nome": "Tiago Carvalho",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Telhados",
+      "Facilites",
+      "Galpão 2",
+      "Galpão 3",
+      "Manutenção"
+    ]
+  },
+  {
+    "nome": "Angela Santos",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Empacotamento"
+    ]
+  },
+  {
+    "nome": "Rafael Santos",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Logística"
+    ]
+  },
+  {
+    "nome": "Alice Ramos Morais",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Manutenção"
+    ]
+  },
+  {
+    "nome": "Thaissa Leonel Oliveira",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Manutenção"
+    ]
+  },
+  {
+    "nome": "Ana Luiza de Paula",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Manutenção"
+    ]
+  },
+  {
+    "nome": "Deyvidson Carlos Peres dos Santos",
+    "cargo": "Responsável por Área",
+    "areas": [
+      "Manutenção"
+    ]
+  }
+]
