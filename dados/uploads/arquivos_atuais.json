@@ -5,5 +5,12 @@
     "hora": "19:58",
     "tamanho": 90365,
     "caminho": "dados/uploads/responsaveis_supervisores_atual.xlsx"
+  },
+  "treinamentos": {
+    "arquivo": "Treinamentos obrigatórios (SHE-QUALID) (1).xlsx",
+    "data": "09/09/2026",
+    "hora": "20:00",
+    "tamanho": 1353869,
+    "caminho": "dados/uploads/treinamentos_atual.xlsx"
   }
 }
