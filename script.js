@@ -749,3 +749,23 @@ async function carregarHistoricoAdmin() {
         tabela.innerHTML = `<tr><td colspan="6">${erro.message}</td></tr>`;
     }
 }
+
+async function baixarXlsx(tipo, nomeArquivo) {
+    try {
+        const resposta = await fetch(`${API_URL}/admin/exportar/${tipo}`, {
+            headers: { 'X-Admin-Token': sessionStorage.getItem(ADMIN_TOKEN_KEY) || '' }
+        });
+        if (!resposta.ok) throw new Error('Não foi possível gerar o arquivo XLSX.');
+        const blob = await resposta.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = nomeArquivo;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    } catch (erro) {
+        alert(`❌ ${erro.message}`);
+    }
+}

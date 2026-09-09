@@ -4,15 +4,17 @@ import hmac
 import os
 import secrets
 import tempfile
+from io import BytesIO
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
+import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = Path(os.environ.get('PTW_DATA_DIR', Path(tempfile.gettempdir()) / 'ptw_dados'))
-PIN_ADMIN = os.environ.get('PTW_ADMIN_PIN', '1234')
+PIN_ADMIN = os.environ.get('PTW_ADMIN_PIN', 'JDEPIU')
 MAX_ATTEMPTS = 3
 BLOCK_MINUTES = 5
 LOGIN_FAILURES = {}
@@ -94,6 +96,49 @@ def _history(tipo, filename, success, message, count=0):
 def _save_json(name, data):
     DATA_DIR.mkdir(exist_ok=True)
     (DATA_DIR / name).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
+
+
+def _current_json(filename):
+    repository, branch = _github_repository()
+    if repository:
+        try:
+            content = repository.get_contents(f'dados/{filename}', ref=branch)
+            return json.loads(content.decoded_content.decode('utf-8'))
+        except Exception:
+            pass
+    local_file = ROOT / 'dados' / filename
+    if not local_file.exists():
+        raise FileNotFoundError(f'Arquivo de dados não encontrado: {filename}')
+    return json.loads(local_file.read_text(encoding='utf-8'))
+
+
+def _areas_as_text(value):
+    return ' | '.join(str(area) for area in value) if isinstance(value, list) else (value or '')
+
+
+def _xlsx_response(tipo):
+    output = BytesIO()
+    if tipo == 'solicitantes':
+        rows = [{**item, 'areas': _areas_as_text(item.get('areas'))} for item in _current_json('solicitantes.json')]
+        filename = 'Solicitantes_PTW.xlsx'
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            pd.DataFrame(rows).to_excel(writer, index=False, sheet_name='Solicitantes')
+    elif tipo == 'responsaveis':
+        rows = [{**item, 'areas': _areas_as_text(item.get('areas'))} for item in _current_json('responsaveis.json')]
+        filename = 'Responsaveis_PTW.xlsx'
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            pd.DataFrame(rows).to_excel(writer, index=False, sheet_name='Responsaveis')
+    elif tipo == 'supervisores':
+        filename = 'Supervisores_PTW.xlsx'
+        sources = [('Altura', 'supervisores_altura.json'), ('Quente', 'supervisores_quente.json'), ('Confinado', 'supervisores_confinado.json')]
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            for sheet, source in sources:
+                rows = [{**item, 'areas': _areas_as_text(item.get('areas'))} for item in _current_json(source)]
+                pd.DataFrame(rows).to_excel(writer, index=False, sheet_name=sheet)
+    else:
+        raise ValueError('Tipo de exportação inválido.')
+    output.seek(0)
+    return send_file(output, as_attachment=True, download_name=filename, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
 
 def _store_upload(file, destination):
@@ -225,6 +270,18 @@ def history():
         return jsonify([])
     except (OSError, json.JSONDecodeError):
         return jsonify([])
+
+
+@app.route('/api/admin/exportar/<tipo>', methods=['GET'])
+def exportar(tipo):
+    if not _token_ok():
+        return _json_error('Acesso administrativo necessário.', 401)
+    try:
+        return _xlsx_response(tipo)
+    except (FileNotFoundError, ValueError, json.JSONDecodeError) as error:
+        return _json_error(str(error), 400)
+    except Exception:
+        return _json_error('Não foi possível gerar o arquivo Excel.', 500)
 
 
 handler = app
