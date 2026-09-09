@@ -1,5 +1,15 @@
 [
   {
+    "data": "2026-09-09T19:59:05",
+    "hora": "19:59:05",
+    "tipo": "matriz",
+    "arquivo": "SHE 10 - B Work Permit Systems-Responsibility Matrix_versão.rev05.08.2026.xlsx",
+    "sucesso": true,
+    "mensagem": "Responsáveis: 34 | Altura: 44 | Quente: 65 | Confinado: 21",
+    "registros": 164,
+    "usuario": "Admin"
+  },
+  {
     "data": "2026-09-09T19:29:20",
     "hora": "19:29:20",
     "tipo": "matriz",
