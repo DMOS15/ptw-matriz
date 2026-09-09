@@ -70,7 +70,7 @@ async function verificarServidor() {
 // ============================================================
 async function carregarJSON(arquivo) {
     try {
-        const resposta = await fetch(BASE_URL + arquivo);
+        const resposta = await fetch(`${BASE_URL}${arquivo}?v=${Date.now()}`, { cache: 'no-store' });
         if (!resposta.ok) throw new Error(`Erro ao carregar ${arquivo}: ${resposta.status}`);
         return await resposta.json();
     } catch (erro) {
