@@ -10,7 +10,6 @@ from pathlib import Path
 
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
-import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = Path(os.environ.get('PTW_DATA_DIR', Path(tempfile.gettempdir()) / 'ptw_dados'))
@@ -20,6 +19,13 @@ BLOCK_MINUTES = 5
 LOGIN_FAILURES = {}
 HISTORY_FILE = Path(tempfile.gettempdir()) / 'ptw_historico_atualizacoes.json'
 HISTORY_REPO_PATH = 'dados/historico_atualizacoes.json'
+UPLOAD_METADATA_PATH = 'dados/uploads/arquivos_atuais.json'
+CURRENT_UPLOAD_PATHS = {
+    'treinamentos': 'dados/uploads/treinamentos_atual.xlsx',
+    'matriz': 'dados/uploads/responsaveis_supervisores_atual.xlsx',
+    'responsaveis': 'dados/uploads/responsaveis_supervisores_atual.xlsx',
+    'supervisores': 'dados/uploads/responsaveis_supervisores_atual.xlsx'
+}
 TOKEN_SECRET = os.environ.get('PTW_TOKEN_SECRET', 'ptw-development-secret-change-me')
 JSON_FILES = (
     'solicitantes.json',
@@ -98,47 +104,76 @@ def _save_json(name, data):
     (DATA_DIR / name).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
-def _current_json(filename):
+def _load_upload_metadata():
+    local_file = DATA_DIR / 'uploads' / 'arquivos_atuais.json'
+    if local_file.exists():
+        try:
+            return json.loads(local_file.read_text(encoding='utf-8'))
+        except json.JSONDecodeError:
+            pass
     repository, branch = _github_repository()
     if repository:
         try:
-            content = repository.get_contents(f'dados/{filename}', ref=branch)
+            content = repository.get_contents(UPLOAD_METADATA_PATH, ref=branch)
             return json.loads(content.decoded_content.decode('utf-8'))
         except Exception:
             pass
-    local_file = ROOT / 'dados' / filename
-    if not local_file.exists():
-        raise FileNotFoundError(f'Arquivo de dados não encontrado: {filename}')
-    return json.loads(local_file.read_text(encoding='utf-8'))
+    return {}
 
 
-def _areas_as_text(value):
-    return ' | '.join(str(area) for area in value) if isinstance(value, list) else (value or '')
+def salvar_upload_atual(source, tipo, filename):
+    upload_dir = DATA_DIR / 'uploads'
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    target_name = Path(CURRENT_UPLOAD_PATHS[tipo]).name
+    (upload_dir / target_name).write_bytes(source.read_bytes())
+    metadata = _load_upload_metadata()
+    now = datetime.now()
+    metadata[tipo] = {
+        'arquivo': filename,
+        'data': now.strftime('%d/%m/%Y'),
+        'hora': now.strftime('%H:%M'),
+        'tamanho': source.stat().st_size,
+        'caminho': CURRENT_UPLOAD_PATHS[tipo]
+    }
+    local_metadata = upload_dir / 'arquivos_atuais.json'
+    local_metadata.write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding='utf-8')
+
+
+def publicar_uploads_atuais(data_dir, repository, branch, message):
+    upload_dir = data_dir / 'uploads'
+    if not upload_dir.exists():
+        return
+    for source in upload_dir.iterdir():
+        if not source.is_file():
+            continue
+        path = f'dados/uploads/{source.name}'
+        content = source.read_bytes() if source.suffix.lower() == '.xlsx' else source.read_text(encoding='utf-8')
+        try:
+            current = repository.get_contents(path, ref=branch)
+            repository.update_file(path, message, content, current.sha, branch=branch)
+        except Exception:
+            repository.create_file(path, message, content, branch=branch)
 
 
 def _xlsx_response(tipo):
-    output = BytesIO()
-    if tipo == 'solicitantes':
-        rows = [{**item, 'areas': _areas_as_text(item.get('areas'))} for item in _current_json('solicitantes.json')]
-        filename = 'Solicitantes_PTW.xlsx'
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
-            pd.DataFrame(rows).to_excel(writer, index=False, sheet_name='Solicitantes')
-    elif tipo == 'responsaveis':
-        rows = [{**item, 'areas': _areas_as_text(item.get('areas'))} for item in _current_json('responsaveis.json')]
-        filename = 'Responsaveis_PTW.xlsx'
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
-            pd.DataFrame(rows).to_excel(writer, index=False, sheet_name='Responsaveis')
-    elif tipo == 'supervisores':
-        filename = 'Supervisores_PTW.xlsx'
-        sources = [('Altura', 'supervisores_altura.json'), ('Quente', 'supervisores_quente.json'), ('Confinado', 'supervisores_confinado.json')]
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
-            for sheet, source in sources:
-                rows = [{**item, 'areas': _areas_as_text(item.get('areas'))} for item in _current_json(source)]
-                pd.DataFrame(rows).to_excel(writer, index=False, sheet_name=sheet)
-    else:
-        raise ValueError('Tipo de exportação inválido.')
-    output.seek(0)
-    return send_file(output, as_attachment=True, download_name=filename, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    if tipo not in CURRENT_UPLOAD_PATHS:
+        raise ValueError('Tipo de arquivo inválido.')
+    metadata = _load_upload_metadata().get(tipo)
+    if not metadata:
+        raise FileNotFoundError('Nenhum arquivo XLSX atual foi enviado para este tipo.')
+    repository, branch = _github_repository()
+    content = None
+    if repository:
+        try:
+            content = repository.get_contents(metadata['caminho'], ref=branch).decoded_content
+        except Exception:
+            content = None
+    if content is None:
+        local_file = DATA_DIR / 'uploads' / Path(metadata['caminho']).name
+        if not local_file.exists():
+            raise FileNotFoundError('Arquivo XLSX atual não encontrado.')
+        content = local_file.read_bytes()
+    return send_file(BytesIO(content), as_attachment=True, download_name=metadata['arquivo'], mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
 
 def _store_upload(file, destination):
@@ -282,6 +317,13 @@ def exportar(tipo):
         return _json_error(str(error), 400)
     except Exception:
         return _json_error('Não foi possível gerar o arquivo Excel.', 500)
+
+
+@app.route('/api/admin/uploads-atuais', methods=['GET'])
+def uploads_atuais():
+    if not _token_ok():
+        return _json_error('Acesso administrativo necessário.', 401)
+    return jsonify(_load_upload_metadata())
 
 
 handler = app

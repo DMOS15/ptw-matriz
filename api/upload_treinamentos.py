@@ -6,9 +6,9 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 try:
-	from api.processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_training
+	from api.processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_training, salvar_upload_atual, publicar_uploads_atuais
 except ImportError:
-	from processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_training
+	from processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_training, salvar_upload_atual, publicar_uploads_atuais
 
 print("=" * 50)
 print("🚀 INICIANDO UPLOAD DE TREINAMENTOS")
@@ -39,6 +39,7 @@ def atualizar_github(data_dir, message):
 			repository.update_file(path, message, source.read_text(encoding='utf-8'), current.sha, branch=branch)
 		except Exception:
 			repository.create_file(path, message, source.read_text(encoding='utf-8'), branch=branch)
+	publicar_uploads_atuais(data_dir, repository, branch, message)
 
 
 @app.route('/api/upload_treinamentos', methods=['POST', 'OPTIONS'])
@@ -54,6 +55,7 @@ def upload_treinamentos():
 			filename = _store_upload(arquivo, source)
 			criar_backup_atual()
 			count, message = process_training(source)
+			salvar_upload_atual(source, 'treinamentos', filename)
 			atualizar_github(DATA_DIR, 'Atualiza dados PTW: treinamentos')
 		_history('treinamentos', filename, True, message, count)
 		return jsonify({'sucesso': True, 'mensagem': f'Concluído! {message}', 'registros': count})

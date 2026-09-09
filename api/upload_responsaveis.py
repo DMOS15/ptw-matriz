@@ -6,9 +6,9 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 try:
-	from api.processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_matrix
+	from api.processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_matrix, salvar_upload_atual, publicar_uploads_atuais
 except ImportError:
-	from processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_matrix
+	from processar_dados import DATA_DIR, _history, _json_error, _store_upload, _token_ok, criar_backup_atual, process_matrix, salvar_upload_atual, publicar_uploads_atuais
 
 print("=" * 50)
 print("🚀 INICIANDO UPLOAD DE RESPONSÁVEIS")
@@ -38,7 +38,7 @@ def atualizar_github(data_dir, message):
 			repository.update_file(path, message, source.read_text(encoding='utf-8'), current.sha, branch=branch)
 		except Exception:
 			repository.create_file(path, message, source.read_text(encoding='utf-8'), branch=branch)
-		criar_backup_atual()
+	publicar_uploads_atuais(data_dir, repository, branch, message)
 
 
 @app.route('/api/upload_responsaveis', methods=['POST', 'OPTIONS'])
@@ -54,6 +54,7 @@ def upload_responsaveis():
 			filename = _store_upload(arquivo, source)
 			criar_backup_atual()
 			count, message = process_matrix(source, True, False)
+			salvar_upload_atual(source, 'responsaveis', filename)
 			atualizar_github(DATA_DIR, 'Atualiza dados PTW: responsáveis')
 		_history('responsaveis', filename, True, message, count)
 		return jsonify({'sucesso': True, 'mensagem': f'Concluído! {message}', 'registros': count})

@@ -704,6 +704,7 @@ async function verificarPin() {
         campoPin.value = '';
         verificarServidor();
         carregarHistoricoAdmin();
+        carregarUploadsAtuais();
     } catch (erro) {
         mensagem.textContent = erro instanceof TypeError
             ? '❌ Servidor indisponível.'
@@ -767,5 +768,28 @@ async function baixarXlsx(tipo, nomeArquivo) {
         URL.revokeObjectURL(url);
     } catch (erro) {
         alert(`❌ ${erro.message}`);
+    }
+}
+
+function formatarTamanhoUpload(bytes) {
+    if (!bytes) return '-';
+    return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+}
+
+async function carregarUploadsAtuais() {
+    try {
+        const resposta = await fetch(`${API_URL}/admin/uploads-atuais`, {
+            headers: { 'X-Admin-Token': sessionStorage.getItem(ADMIN_TOKEN_KEY) || '' }
+        });
+        const dados = await lerRespostaJSON(resposta);
+        const preencher = (id, item) => {
+            const elemento = document.getElementById(id);
+            if (!elemento || !item) return;
+            elemento.textContent = `Último arquivo: ${item.arquivo} | Enviado em: ${item.data} ${item.hora} | Tamanho: ${formatarTamanhoUpload(item.tamanho)}`;
+        };
+        preencher('uploadInfoTreinamentos', dados.treinamentos);
+        preencher('uploadInfoMatriz', dados.matriz || dados.responsaveis || dados.supervisores);
+    } catch (erro) {
+        console.error('[PTW] Não foi possível carregar metadados dos uploads:', erro);
     }
 }
