@@ -120,11 +120,15 @@ def converter_supervisores(source):
                 raise ValueError(f'Nenhuma aba encontrada para {filename}: {", ".join(sheets)}.')
             df = pd.read_excel(excel, sheet_name=sheet, dtype=str).fillna('')
         nome_coluna = 'Nome' if 'Nome' in df.columns else df.columns[0]
-        areas = [area for area in AREAS_SUPERVISORES if area in df.columns]
+        colunas_area = {normalizar_nome_area(coluna): coluna for coluna in df.columns}
         data = []
         for _, row in df.iterrows():
             nome = text(row.get(nome_coluna, ''))
-            marcadas = [area for area in areas if selected(row.get(area, ''))]
+            marcadas = [
+                area for area in AREAS_SUPERVISORES
+                if (coluna := colunas_area.get(normalizar_nome_area(area)))
+                and selected(row.get(coluna, ''))
+            ]
             if nome and marcadas:
                 data.append({'nome': nome, 'cargo': 'Supervisor', 'areas': marcadas})
         _write(filename, data)

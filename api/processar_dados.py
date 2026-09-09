@@ -17,6 +17,7 @@ MAX_ATTEMPTS = 3
 BLOCK_MINUTES = 5
 LOGIN_FAILURES = {}
 HISTORY_FILE = Path(tempfile.gettempdir()) / 'ptw_historico_atualizacoes.json'
+HISTORY_REPO_PATH = 'dados/historico_atualizacoes.json'
 TOKEN_SECRET = os.environ.get('PTW_TOKEN_SECRET', 'ptw-development-secret-change-me')
 JSON_FILES = (
     'solicitantes.json',
@@ -55,6 +56,14 @@ def _history(tipo, filename, success, message, count=0):
         entries = json.loads(HISTORY_FILE.read_text(encoding='utf-8')) if HISTORY_FILE.exists() else []
     except (OSError, json.JSONDecodeError):
         entries = []
+    if not entries:
+        try:
+            repository, branch = _github_repository()
+            if repository:
+                content = repository.get_contents(HISTORY_REPO_PATH, ref=branch)
+                entries = json.loads(content.decoded_content.decode('utf-8'))
+        except (OSError, ValueError, json.JSONDecodeError):
+            entries = []
     entries.insert(0, {
         'data': now.isoformat(timespec='seconds'),
         'hora': now.strftime('%H:%M:%S'),
@@ -68,6 +77,17 @@ def _history(tipo, filename, success, message, count=0):
     try:
         HISTORY_FILE.write_text(json.dumps(entries[:100], ensure_ascii=False, indent=2), encoding='utf-8')
     except OSError:
+        pass
+    try:
+        repository, branch = _github_repository()
+        if repository:
+            serialized = json.dumps(entries[:100], ensure_ascii=False, indent=2)
+            try:
+                current = repository.get_contents(HISTORY_REPO_PATH, ref=branch)
+                repository.update_file(HISTORY_REPO_PATH, f'Histórico PTW: {tipo}', serialized, current.sha, branch=branch)
+            except Exception:
+                repository.create_file(HISTORY_REPO_PATH, f'Histórico PTW: {tipo}', serialized, branch=branch)
+    except Exception:
         pass
 
 
@@ -196,7 +216,13 @@ def history():
     if not _token_ok():
         return _json_error('Acesso administrativo necessário.', 401)
     try:
-        return jsonify(json.loads(HISTORY_FILE.read_text(encoding='utf-8')) if HISTORY_FILE.exists() else [])
+        if HISTORY_FILE.exists():
+            return jsonify(json.loads(HISTORY_FILE.read_text(encoding='utf-8')))
+        repository, branch = _github_repository()
+        if repository:
+            content = repository.get_contents(HISTORY_REPO_PATH, ref=branch)
+            return jsonify(json.loads(content.decoded_content.decode('utf-8')))
+        return jsonify([])
     except (OSError, json.JSONDecodeError):
         return jsonify([])
 
