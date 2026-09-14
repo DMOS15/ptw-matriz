@@ -251,7 +251,8 @@ def ultima_atualizacao():
         historico = []
 
     if tipo_filtro:
-        historico = [item for item in historico if str(item.get('tipo', '')).lower() == tipo_filtro]
+        tipos_filtrados = {'responsaveis', 'matriz'} if tipo_filtro == 'responsaveis' else {tipo_filtro}
+        historico = [item for item in historico if str(item.get('tipo', '')).lower() in tipos_filtrados]
 
     if not historico:
         return jsonify({'data': None, 'arquivo': None, 'tipo': tipo_filtro or None, 'mensagem': 'Sem registro'})
