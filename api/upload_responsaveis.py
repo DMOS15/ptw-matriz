@@ -48,6 +48,9 @@ def upload_responsaveis():
 	if not _token_ok():
 		return _json_error('Acesso administrativo necessário.', 401)
 	arquivo = request.files.get('arquivo')
+	usuario = (request.form.get('usuario') or request.form.get('nome') or '').strip()
+	if not usuario:
+		return _json_error('Informe o nome do usuário que está fazendo o upload.', 400)
 	try:
 		with tempfile.TemporaryDirectory() as folder:
 			source = Path(folder) / (arquivo.filename if arquivo else 'upload.xlsx')
@@ -56,10 +59,10 @@ def upload_responsaveis():
 			count, message = process_matrix(source, True, False)
 			salvar_upload_atual(source, 'responsaveis', filename)
 			atualizar_github(DATA_DIR, 'Atualiza dados PTW: responsáveis')
-		_history('responsaveis', filename, True, message, count)
+		_history('responsaveis', filename, True, message, count, usuario)
 		return jsonify({'sucesso': True, 'mensagem': f'Concluído! {message}', 'registros': count})
 	except Exception as error:
-		_history('responsaveis', arquivo.filename if arquivo else '', False, str(error))
+		_history('responsaveis', arquivo.filename if arquivo else '', False, str(error), usuario=usuario)
 		status = 400 if isinstance(error, ValueError) else 500
 		return _json_error(str(error), status)
 

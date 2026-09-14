@@ -22,6 +22,7 @@ HISTORY_REPO_PATH = 'dados/historico_atualizacoes.json'
 UPLOAD_METADATA_PATH = 'dados/uploads/arquivos_atuais.json'
 CURRENT_UPLOAD_PATHS = {
     'treinamentos': 'dados/uploads/treinamentos_atual.xlsx',
+    'solicitantes': 'dados/uploads/treinamentos_atual.xlsx',
     'matriz': 'dados/uploads/responsaveis_supervisores_atual.xlsx',
     'responsaveis': 'dados/uploads/responsaveis_supervisores_atual.xlsx',
     'supervisores': 'dados/uploads/responsaveis_supervisores_atual.xlsx'
@@ -58,7 +59,7 @@ def _token_ok():
         return False
 
 
-def _history(tipo, filename, success, message, count=0):
+def _history(tipo, filename, success, message, count=0, usuario='Admin'):
     now = datetime.now()
     try:
         entries = json.loads(HISTORY_FILE.read_text(encoding='utf-8')) if HISTORY_FILE.exists() else []
@@ -80,7 +81,7 @@ def _history(tipo, filename, success, message, count=0):
         'sucesso': success,
         'mensagem': message,
         'registros': count,
-        'usuario': 'Admin'
+        'usuario': usuario.strip() or 'Admin'
     })
     try:
         HISTORY_FILE.write_text(json.dumps(entries[:100], ensure_ascii=False, indent=2), encoding='utf-8')
@@ -156,9 +157,10 @@ def publicar_uploads_atuais(data_dir, repository, branch, message):
 
 
 def _xlsx_response(tipo):
-    if tipo not in CURRENT_UPLOAD_PATHS:
+    tipo_normalizado = 'treinamentos' if tipo == 'solicitantes' else tipo
+    if tipo_normalizado not in CURRENT_UPLOAD_PATHS:
         raise ValueError('Tipo de arquivo inválido.')
-    metadata = _load_upload_metadata().get(tipo)
+    metadata = _load_upload_metadata().get(tipo_normalizado)
     if not metadata:
         raise FileNotFoundError('Nenhum arquivo XLSX atual foi enviado para este tipo.')
     repository, branch = _github_repository()
@@ -234,6 +236,7 @@ def process_training(source):
 
 @app.route('/api/ultima-atualizacao', methods=['GET'])
 def ultima_atualizacao():
+    tipo_filtro = request.args.get('tipo', '').strip().lower()
     try:
         if HISTORY_FILE.exists():
             historico = json.loads(HISTORY_FILE.read_text(encoding='utf-8'))
@@ -247,8 +250,11 @@ def ultima_atualizacao():
     except (OSError, json.JSONDecodeError):
         historico = []
 
+    if tipo_filtro:
+        historico = [item for item in historico if str(item.get('tipo', '')).lower() == tipo_filtro]
+
     if not historico:
-        return jsonify({'data': None, 'arquivo': None, 'tipo': None, 'mensagem': 'Sem registro'})
+        return jsonify({'data': None, 'arquivo': None, 'tipo': tipo_filtro or None, 'mensagem': 'Sem registro'})
 
     registro = historico[0]
     return jsonify({

@@ -387,16 +387,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
             dados = ordenarPorNome(dados);
             atualizarResumoResponsaveis(dados, 'stats');
-            obterUltimaAtualizacao().then(data => {
-                if (data) {
-                    definirTexto('statsResponsaveisAtualizacao', new Intl.DateTimeFormat('pt-BR', {
-                        timeZone: 'America/Sao_Paulo',
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                    }).format(data));
-                }
-            });
+            fetch(`${API_URL}/ultima-atualizacao?tipo=responsaveis`, { cache: 'no-store' })
+                .then(resposta => resposta.ok ? resposta.json() : null)
+                .then(dadosAtualizacao => {
+                    const dataTexto = dadosAtualizacao?.data;
+                    if (!dataTexto) return;
+                    const data = new Date(
+                        typeof dataTexto === 'string' && !/[Zz]|[+-]\d{2}:?\d{2}$/.test(dataTexto)
+                            ? `${dataTexto}-03:00`
+                            : dataTexto
+                    );
+                    if (!Number.isNaN(data.getTime())) {
+                        definirTexto('statsResponsaveisAtualizacao', new Intl.DateTimeFormat('pt-BR', {
+                            timeZone: 'America/Sao_Paulo',
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        }).format(data));
+                    }
+                })
+                .catch(() => {});
 
             const areas = extrairAreas(dados, 'areas');
             popularSelect('filtroAreaResponsaveis', areas);
@@ -579,6 +589,7 @@ function abrirModalUpload(tipo) {
     document.getElementById('modalTitulo').textContent = titulos[tipo] || '📤 Upload Excel';
     document.getElementById('modalDescricao').textContent = descricoes[tipo] || 'Selecione o arquivo Excel para atualizar os dados:';
     document.getElementById('nomeArquivoEsperado').textContent = nomesArquivos[tipo] || 'Arquivo Excel';
+    document.getElementById('inputUsuarioUpload').value = '';
     
     document.getElementById('modalUpload').style.display = 'flex';
     document.getElementById('uploadLoading').style.display = 'none';
@@ -685,6 +696,13 @@ function enviarArquivo() {
         document.getElementById('uploadError').style.display = 'block';
         return;
     }
+
+    const nomeUsuario = (document.getElementById('inputUsuarioUpload')?.value || '').trim();
+    if (!nomeUsuario) {
+        document.getElementById('uploadError').textContent = '⚠️ Informe o nome do usuário antes de enviar.';
+        document.getElementById('uploadError').style.display = 'block';
+        return;
+    }
     
     const loading = document.getElementById('uploadLoading');
     const error = document.getElementById('uploadError');
@@ -698,6 +716,7 @@ function enviarArquivo() {
     
     const formData = new FormData();
     formData.append('arquivo', arquivoSelecionado);
+    formData.append('usuario', nomeUsuario);
     
     const rotas = {
         'treinamentos': '/api/upload_treinamentos',
