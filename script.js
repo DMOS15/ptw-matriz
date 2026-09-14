@@ -82,6 +82,27 @@ async function carregarJSON(arquivo) {
 // ============================================================
 // ATUALIZAR DATA DO HISTÓRICO DE DOCUMENTAÇÃO
 // ============================================================
+function formatarDataBrasilia(dataValor) {
+    if (!dataValor) return 'Sem registro';
+
+    const data = new Date(
+        typeof dataValor === 'string' && !/[Zz]|[+-]\d{2}:?\d{2}$/.test(dataValor)
+            ? `${dataValor}-03:00`
+            : dataValor
+    );
+
+    if (Number.isNaN(data.getTime())) return 'Sem registro';
+
+    return new Intl.DateTimeFormat('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }).format(data);
+}
+
 async function obterUltimaAtualizacao() {
     const urls = [
         `${API_URL}/ultima-atualizacao`,
@@ -98,7 +119,11 @@ async function obterUltimaAtualizacao() {
             const dataTexto = registro?.data || dados?.data;
             if (!dataTexto) continue;
 
-            const data = new Date(dataTexto);
+            const data = new Date(
+                typeof dataTexto === 'string' && !/[Zz]|[+-]\d{2}:?\d{2}$/.test(dataTexto)
+                    ? `${dataTexto}-03:00`
+                    : dataTexto
+            );
             if (!Number.isNaN(data.getTime())) return data;
         } catch (erro) {
             console.warn('[PTW] Não foi possível carregar a última atualização:', erro);
@@ -110,13 +135,7 @@ async function obterUltimaAtualizacao() {
 
 async function atualizarData() {
     const data = await obterUltimaAtualizacao();
-    const valor = data ? data.toLocaleString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    }) : 'Sem registro';
+    const valor = data ? formatarDataBrasilia(data) : 'Sem registro';
 
     const el = document.getElementById('data-atualizacao');
     if (el) el.textContent = valor;
@@ -370,7 +389,12 @@ document.addEventListener('DOMContentLoaded', () => {
             atualizarResumoResponsaveis(dados, 'stats');
             obterUltimaAtualizacao().then(data => {
                 if (data) {
-                    definirTexto('statsResponsaveisAtualizacao', data.toLocaleDateString('pt-BR'));
+                    definirTexto('statsResponsaveisAtualizacao', new Intl.DateTimeFormat('pt-BR', {
+                        timeZone: 'America/Sao_Paulo',
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    }).format(data));
                 }
             });
 

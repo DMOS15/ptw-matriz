@@ -28,6 +28,27 @@ const adminServerStatus = document.getElementById('adminServerStatus');
 const adminServerStatusFooter = document.getElementById('adminServerStatusFooter');
 const adminCount = document.getElementById('adminCount');
 
+function formatarDataBrasilia(dataValor) {
+    if (!dataValor) return 'Sem registro';
+
+    const data = new Date(
+        typeof dataValor === 'string' && !/[Zz]|[+-]\d{2}:?\d{2}$/.test(dataValor)
+            ? `${dataValor}-03:00`
+            : dataValor
+    );
+
+    if (Number.isNaN(data.getTime())) return 'Sem registro';
+
+    return new Intl.DateTimeFormat('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }).format(data);
+}
+
 async function obterUltimaAtualizacao() {
     const urls = [
         `${API_URL}/ultima-atualizacao`,
@@ -44,7 +65,11 @@ async function obterUltimaAtualizacao() {
             const dataTexto = registro?.data || dados?.data;
             if (!dataTexto) continue;
 
-            const data = new Date(dataTexto);
+            const data = new Date(
+                typeof dataTexto === 'string' && !/[Zz]|[+-]\d{2}:?\d{2}$/.test(dataTexto)
+                    ? `${dataTexto}-03:00`
+                    : dataTexto
+            );
             if (!Number.isNaN(data.getTime())) return data;
         } catch (erro) {
             console.warn('[PTW] Não foi possível carregar a última atualização no admin:', erro);
@@ -56,13 +81,7 @@ async function obterUltimaAtualizacao() {
 
 async function atualizarData() {
     const data = await obterUltimaAtualizacao();
-    const valor = data ? data.toLocaleString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    }) : 'Sem registro';
+    const valor = data ? formatarDataBrasilia(data) : 'Sem registro';
 
     const elemento = document.getElementById('data-atualizacao');
     if (elemento) elemento.textContent = valor;
@@ -264,7 +283,7 @@ async function carregarHistorico() {
         const historico = await resposta.json();
         tabela.innerHTML = historico.length ? historico.map(item => `
             <tr>
-                <td>${new Date(item.data).toLocaleString('pt-BR')}</td>
+                <td>${formatarDataBrasilia(item.data)}</td>
                 <td>${item.tipo}</td>
                 <td>${item.arquivo || '-'}</td>
                 <td><span class="${item.sucesso ? 'status-valido' : 'status-vencido'}">${item.sucesso ? 'Sucesso' : 'Erro'}</span></td>
