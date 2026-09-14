@@ -795,15 +795,37 @@ async function carregarHistoricoAdmin() {
         });
         if (!resposta.ok) throw new Error('Não foi possível carregar o histórico.');
         const historico = await lerRespostaJSON(resposta);
-        tabela.innerHTML = historico.length ? historico.map(item => `
+        tabela.innerHTML = historico.length ? historico.map(item => {
+            const data = item.data ? new Date(
+                typeof item.data === 'string' && !/[Zz]|[+-]\d{2}:?\d{2}$/.test(item.data)
+                    ? `${item.data}-03:00`
+                    : item.data
+            ) : null;
+            const dataFormatada = data ? new Intl.DateTimeFormat('pt-BR', {
+                timeZone: 'America/Sao_Paulo',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(data) : 'Sem registro';
+            const horaFormatada = data ? new Intl.DateTimeFormat('pt-BR', {
+                timeZone: 'America/Sao_Paulo',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            }).format(data) : (item.hora || '');
+
+            return `
             <tr>
-                <td>${new Date(item.data).toLocaleString('pt-BR')}</td>
-                <td>${item.hora || new Date(item.data).toLocaleTimeString('pt-BR')}</td>
+                <td>${dataFormatada}</td>
+                <td>${item.hora || horaFormatada}</td>
                 <td>${item.arquivo || '-'}</td>
                 <td>${item.registros ?? '-'}</td>
                 <td>${item.usuario || 'Admin'}</td>
                 <td><span class="${item.sucesso ? 'status-valido' : 'status-vencido'}">${item.sucesso ? 'Sucesso' : 'Erro'}</span></td>
-            </tr>`).join('') : '<tr><td colspan="6">Nenhuma atualização registrada.</td></tr>';
+            </tr>`;
+        }).join('') : '<tr><td colspan="6">Nenhuma atualização registrada.</td></tr>';
     } catch (erro) {
         tabela.innerHTML = `<tr><td colspan="6">${erro.message}</td></tr>`;
     }
