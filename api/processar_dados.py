@@ -232,6 +232,33 @@ def process_training(source):
     return len(data), f'{len(data)} registros processados'
 
 
+@app.route('/api/ultima-atualizacao', methods=['GET'])
+def ultima_atualizacao():
+    try:
+        if HISTORY_FILE.exists():
+            historico = json.loads(HISTORY_FILE.read_text(encoding='utf-8'))
+        else:
+            repository, branch = _github_repository()
+            if repository:
+                content = repository.get_contents(HISTORY_REPO_PATH, ref=branch)
+                historico = json.loads(content.decoded_content.decode('utf-8'))
+            else:
+                historico = []
+    except (OSError, json.JSONDecodeError):
+        historico = []
+
+    if not historico:
+        return jsonify({'data': None, 'arquivo': None, 'tipo': None, 'mensagem': 'Sem registro'})
+
+    registro = historico[0]
+    return jsonify({
+        'data': registro.get('data'),
+        'arquivo': registro.get('arquivo'),
+        'tipo': registro.get('tipo'),
+        'mensagem': registro.get('mensagem')
+    })
+
+
 def process_matrix(source, process_responsaveis=True, process_supervisores=True):
     conversor.ARQUIVO_MATRIZ = str(source)
     conversor.DATA_DIR = DATA_DIR

@@ -80,19 +80,49 @@ async function carregarJSON(arquivo) {
 }
 
 // ============================================================
-// ATUALIZAR DATA NO RODAPÉ
+// ATUALIZAR DATA DO HISTÓRICO DE DOCUMENTAÇÃO
 // ============================================================
-function atualizarData() {
-    const agora = new Date();
-    const dataFormatada = agora.toLocaleString('pt-BR', {
+async function obterUltimaAtualizacao() {
+    const urls = [
+        `${API_URL}/ultima-atualizacao`,
+        `${BASE_URL}historico_atualizacoes.json?v=${Date.now()}`
+    ];
+
+    for (const url of urls) {
+        try {
+            const resposta = await fetch(url, { cache: 'no-store' });
+            if (!resposta.ok) continue;
+
+            const dados = await resposta.json();
+            const registro = Array.isArray(dados) ? dados[0] : dados;
+            const dataTexto = registro?.data || dados?.data;
+            if (!dataTexto) continue;
+
+            const data = new Date(dataTexto);
+            if (!Number.isNaN(data.getTime())) return data;
+        } catch (erro) {
+            console.warn('[PTW] Não foi possível carregar a última atualização:', erro);
+        }
+    }
+
+    return null;
+}
+
+async function atualizarData() {
+    const data = await obterUltimaAtualizacao();
+    const valor = data ? data.toLocaleString('pt-BR', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
-    });
+    }) : 'Sem registro';
+
     const el = document.getElementById('data-atualizacao');
-    if (el) el.textContent = dataFormatada;
+    if (el) el.textContent = valor;
+
+    const elAdmin = document.getElementById('ultimaAtualizacao');
+    if (elAdmin) elAdmin.textContent = valor;
 }
 
 // ============================================================
@@ -338,7 +368,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             dados = ordenarPorNome(dados);
             atualizarResumoResponsaveis(dados, 'stats');
-            definirTexto('statsResponsaveisAtualizacao', new Date().toLocaleDateString('pt-BR'));
+            obterUltimaAtualizacao().then(data => {
+                if (data) {
+                    definirTexto('statsResponsaveisAtualizacao', data.toLocaleDateString('pt-BR'));
+                }
+            });
 
             const areas = extrairAreas(dados, 'areas');
             popularSelect('filtroAreaResponsaveis', areas);

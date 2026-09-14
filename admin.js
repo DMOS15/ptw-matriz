@@ -28,9 +28,47 @@ const adminServerStatus = document.getElementById('adminServerStatus');
 const adminServerStatusFooter = document.getElementById('adminServerStatusFooter');
 const adminCount = document.getElementById('adminCount');
 
-function atualizarData() {
+async function obterUltimaAtualizacao() {
+    const urls = [
+        `${API_URL}/ultima-atualizacao`,
+        `./dados/historico_atualizacoes.json?v=${Date.now()}`
+    ];
+
+    for (const url of urls) {
+        try {
+            const resposta = await fetch(url, { cache: 'no-store' });
+            if (!resposta.ok) continue;
+
+            const dados = await resposta.json();
+            const registro = Array.isArray(dados) ? dados[0] : dados;
+            const dataTexto = registro?.data || dados?.data;
+            if (!dataTexto) continue;
+
+            const data = new Date(dataTexto);
+            if (!Number.isNaN(data.getTime())) return data;
+        } catch (erro) {
+            console.warn('[PTW] Não foi possível carregar a última atualização no admin:', erro);
+        }
+    }
+
+    return null;
+}
+
+async function atualizarData() {
+    const data = await obterUltimaAtualizacao();
+    const valor = data ? data.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }) : 'Sem registro';
+
     const elemento = document.getElementById('data-atualizacao');
-    if (elemento) elemento.textContent = new Date().toLocaleString('pt-BR');
+    if (elemento) elemento.textContent = valor;
+
+    const elementoAdmin = document.getElementById('ultimaAtualizacao');
+    if (elementoAdmin) elementoAdmin.textContent = valor;
 }
 
 function obterToken() {
