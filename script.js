@@ -46,21 +46,21 @@ async function verificarServidor() {
         console.info('[PTW] Servidor online:', dados.status, API_URL);
         const status = document.getElementById('status-servidor');
         if (status) {
-            status.textContent = '🟢 Servidor online';
+            status.textContent = 'Servidor online';
             status.className = 'servidor-online';
         }
         const statusServidor = document.getElementById('statusServidor');
-        if (statusServidor) statusServidor.textContent = '🟢 Online';
+        if (statusServidor) statusServidor.textContent = 'Online';
         return true;
     } catch (erro) {
         console.error('[PTW] Servidor indisponível em', API_URL, erro);
         const status = document.getElementById('status-servidor');
         if (status) {
-            status.textContent = '🔴 Servidor offline';
+            status.textContent = 'Servidor offline';
             status.className = 'servidor-offline';
         }
         const statusServidor = document.getElementById('statusServidor');
-        if (statusServidor) statusServidor.textContent = '🔴 Offline';
+        if (statusServidor) statusServidor.textContent = 'Offline';
         return false;
     }
 }
@@ -139,6 +139,9 @@ async function atualizarData() {
 
     const el = document.getElementById('data-atualizacao');
     if (el) el.textContent = valor;
+
+    const elHome = document.getElementById('platform-update');
+    if (elHome) elHome.textContent = valor;
 
     const elAdmin = document.getElementById('ultimaAtualizacao');
     if (elAdmin) elAdmin.textContent = valor;
@@ -346,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tbody.innerHTML = '';
 
                 if (filtrados.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#7f8c8d;">Nenhum resultado encontrado</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#7f8c8d;">Nenhum resultado encontrado</td></tr>';
                     return;
                 }
 
@@ -354,12 +357,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const statusClass = ['NO PRAZO', 'APROVADO'].includes(item.status) ? 'status-valido' : 'status-vencido';
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><strong>${item.nome || '-'}</strong></td>
-                        <td>${item.cargo || '-'}</td>
-                        <td>${item.area || '-'}</td>
-                        <td><span class="${statusClass}">${item.status || '-'}</span></td>
-                        <td>${item.vence_em || '-'}</td>
-                        <td><div class="areas-lista">${(item.areas || []).map(a => `<span>${a}</span>`).join(' ')}</div></td>
+                        <td data-label="Nome"><strong>${item.nome || '-'}</strong></td>
+                        <td data-label="Cargo">${item.cargo || '-'}</td>
+                        <td data-label="Área">${item.area || '-'}</td>
+                        <td data-label="Status"><span class="${statusClass}">${item.status || '-'}</span></td>
+                        <td data-label="Vence em">${item.vence_em || '-'}</td>
+                        <td data-label="Áreas que pode solicitar"><div class="areas-lista">${(item.areas || []).map(a => `<span>${a}</span>`).join(' ')}</div></td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -442,9 +445,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 filtrados.forEach(item => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><strong>${item.nome || '-'}</strong></td>
-                        <td>${item.cargo || '-'}</td>
-                        <td><div class="areas-lista">${(item.areas || []).map(a => `<span>${a}</span>`).join(' ')}</div></td>
+                        <td data-label="Nome"><strong>${item.nome || '-'}</strong></td>
+                        <td data-label="Cargo">${item.cargo || '-'}</td>
+                        <td data-label="Áreas responsáveis"><div class="areas-lista">${(item.areas || []).map(a => `<span>${a}</span>`).join(' ')}</div></td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -521,9 +524,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     filtrados.forEach(item => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td><strong>${item.nome || '-'}</strong></td>
-                            <td>${item.cargo || '-'}</td>
-                            <td><div class="areas-lista">${(item.areas || []).map(a => `<span>${a}</span>`).join(' ')}</div></td>
+                            <td data-label="Nome"><strong>${item.nome || '-'}</strong></td>
+                            <td data-label="Cargo">${item.cargo || '-'}</td>
+                            <td data-label="Áreas que supervisiona"><div class="areas-lista">${(item.areas || []).map(a => `<span>${a}</span>`).join(' ')}</div></td>
                         `;
                         tbody.appendChild(tr);
                     });

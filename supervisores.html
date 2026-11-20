@@ -4,15 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Supervisores PTW</title>
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div class="container">
         <header>
             <div class="header-top">
-                <img src="imagens/logo-jde.png" alt="JDE Logo" class="logo-jde" />
-                <div>
-                    <h1>🛡️ Supervisores</h1>
+                <div class="brand-lockup">
+                    <div class="brand-primary">
+                        <img src="imagens/matriz-ptw-horizontal.svg" alt="Matriz PTW" class="logo-ptw" />
+                        <div class="brand-descriptor">
+                            <strong>Governança de Autorizações para Trabalho</strong>
+                            <span>Controle de Solicitantes, Responsáveis e Supervisores</span>
+                        </div>
+                    </div>
+                    <span class="brand-divider" aria-hidden="true"></span>
+                    <div class="brand-secondary">
+                        <span>Identificação institucional</span>
+                        <img src="imagens/logo-jde.png" alt="JDE" class="logo-jde" />
+                    </div>
+                </div>
+                <div class="header-copy">
+                    <h1>Supervisores</h1>
                     <p>Supervisores de trabalho em altura, quente e confinado</p>
                 </div>
             </div>
@@ -26,18 +42,18 @@
         </section>
 
         <div class="abas">
-            <button class="aba ativa" data-aba="altura">🔺 Altura</button>
-            <button class="aba" data-aba="quente">🔥 Quente</button>
-            <button class="aba" data-aba="confinado">⬛ Confinado</button>
+            <button class="aba ativa" data-aba="altura">Altura</button>
+            <button class="aba" data-aba="quente">Quente</button>
+            <button class="aba" data-aba="confinado">Confinado</button>
         </div>
 
         <div class="filtros">
             <div>
-                <label>🔍 Buscar por Nome:</label>
+                <label>Buscar por nome</label>
                 <input type="text" id="filtroNomeSupervisores" placeholder="Digite o nome..." />
             </div>
             <div>
-                <label>📂 Filtrar por Área:</label>
+                <label>Filtrar por área</label>
                 <select id="filtroAreaSupervisores">
                     <option value="TODAS">TODAS AS ÁREAS</option>
                 </select>
@@ -45,7 +61,7 @@
             <span class="contador" id="contador-supervisores">0 registros</span>
         </div>
 
-        <div class="tabela-container">
+        <div class="tabela-container tabela-dados">
             <table>
                 <thead>
                     <tr>
@@ -55,7 +71,7 @@
                     </tr>
                 </thead>
                 <tbody id="tabela-supervisores">
-                    <tr><td colspan="3" style="text-align:center;padding:30px;">Carregando dados...</td></tr>
+                    <tr class="loading-row"><td colspan="3"><span class="skeleton skeleton-line" aria-hidden="true"></span><span class="loading-label">Carregando dados...</span></td></tr>
                 </tbody>
             </table>
         </div>
@@ -63,25 +79,27 @@
         <div class="footer-actions">
             <div class="qr-code">
                 <img id="qrSupervisores" src="" alt="QR Code" />
-                <p>📱 Acesse pelo celular</p>
+                <p>Acesse pelo celular</p>
             </div>
         </div>
 
         <footer>
             <div class="footer-left">
-                <img src="imagens/logo-jde.png" alt="JDE" class="logo-footer" />
-                <span>📅 <span id="data-atualizacao">Carregando...</span></span>
-                <span>|</span>
-                <span id="status-servidor">🟡 Verificando servidor...</span>
-                <span>|</span>
-                <span>📌 Versão 4.0</span>
-                <span>|</span>
-                <span>🏢 Matriz PTW</span>
+                <div class="footer-system-brand">
+                    <img src="imagens/matriz-ptw-horizontal.svg" alt="Matriz PTW" class="footer-ptw-logo" />
+                    <div><strong>Portal Corporativo de Permissão para Trabalho</strong><span>Frontend GitHub Pages · Backend Vercel</span></div>
+                    <img src="imagens/logo-jde.png" alt="JDE" class="logo-footer" />
+                </div>
+                <div class="footer-system-meta">
+                    <span>Status <strong id="status-servidor">Verificando servidor...</strong></span>
+                    <span>Versão <strong>5.0</strong></span>
+                    <span>Última atualização <strong id="data-atualizacao">Carregando...</strong></span>
+                </div>
             </div>
             <div class="footer-right">
-                <a href="admin.html" class="btn-voltar">🔐 Admin</a>
-                <button onclick="window.location.href='index.html'" class="btn-atualizar">🏠 Início</button>
-                <button onclick="atualizarDados()" class="btn-atualizar">🔄 Recarregar</button>
+                <a href="admin.html" class="btn-voltar">Administração</a>
+                <button onclick="window.location.href='index.html'" class="btn-atualizar">Início</button>
+                <button onclick="atualizarDados()" class="btn-atualizar">Recarregar</button>
             </div>
         </footer>
     </div>

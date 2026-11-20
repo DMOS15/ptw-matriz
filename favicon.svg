@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Matriz PTW</title>
+  <rect width="64" height="64" rx="14" fill="#f7eedc"/>
+  <path d="M32 6 54 14v15c0 15-8 25-22 31C18 54 10 44 10 29V14l22-8Z" fill="#2a5962"/>
+  <path d="M22 22h20v14H22zM22 29h20M29 22v14M35 22v14" fill="none" stroke="#d3ba91" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+  <path d="m21 39 7 6 16-17" fill="none" stroke="#fcf9f4" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+</svg>

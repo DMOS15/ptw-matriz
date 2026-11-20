@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144" role="img" aria-labelledby="title desc">
+  <title id="title">Símbolo Matriz PTW</title>
+  <desc id="desc">Escudo com matriz de controle e check de aprovação</desc>
+  <rect x="2" y="2" width="140" height="140" rx="30" fill="#f7eedc"/>
+  <path d="M72 14 119 31v32c0 31-18 54-47 68C43 117 25 94 25 63V31l47-17Z" fill="#2a5962"/>
+  <path d="M72 27 107 40v23c0 24-13 42-35 53C50 105 37 87 37 63V40l35-13Z" fill="none" stroke="#849fa4" stroke-width="2"/>
+  <path d="M50 49h44v28H50zM50 63h44M64 49v28M80 49v28" fill="none" stroke="#d3ba91" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+  <circle cx="50" cy="49" r="3.5" fill="#fcf9f4"/>
+  <circle cx="94" cy="49" r="3.5" fill="#fcf9f4"/>
+  <circle cx="50" cy="77" r="3.5" fill="#fcf9f4"/>
+  <circle cx="94" cy="77" r="3.5" fill="#fcf9f4"/>
+  <path d="m50 84 13 12 31-32" fill="none" stroke="#fcf9f4" stroke-linecap="round" stroke-linejoin="round" stroke-width="8"/>
+</svg>

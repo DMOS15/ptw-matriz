@@ -3,73 +3,167 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fcf9f4" />
     <title>Matriz PTW - Sistema de Visualização</title>
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="container">
-        <header class="site-header">
-            <div class="header-top">
-                <img src="imagens/logo-jde.png" alt="JDE Logo" class="logo-jde" />
-                <div>
-                    <p class="eyebrow">Portal interno de segurança</p>
-                    <h1>Matriz PTW</h1>
-                    <p>Sistema de Consulta de Autorizações para Trabalho</p>
+    <div class="container home-container">
+        <header class="site-header home-header">
+            <div class="brand-lockup">
+                <div class="brand-primary">
+                    <img src="imagens/matriz-ptw-horizontal.svg" alt="Matriz PTW" class="logo-ptw" />
+                    <div class="brand-descriptor">
+                        <strong>Governança de Autorizações para Trabalho</strong>
+                        <span>Controle de Solicitantes, Responsáveis e Supervisores</span>
+                    </div>
+                </div>
+                <span class="brand-divider" aria-hidden="true"></span>
+                <div class="brand-secondary">
+                    <span>Identificação institucional</span>
+                    <img src="imagens/logo-jde.png" alt="JDE" class="logo-jde" />
                 </div>
             </div>
             <div class="header-meta">
-                <span id="status-servidor" class="status-pill status-pending">Verificando API</span>
-                <span><strong>v4.0</strong> · Última atualização: <span id="data-atualizacao">Carregando...</span></span>
+                <span class="header-status">
+                    <span class="header-status-label">Status da plataforma</span>
+                    <span id="status-servidor" class="status-pill status-pending">Verificando API</span>
+                </span>
+                <span class="header-version">Plataforma Matriz PTW <strong>5.0</strong></span>
             </div>
         </header>
 
-        <main class="menu-principal">
-            <div class="card-menu card-solicitantes">
-                <div class="card-menu-top"><div class="icon">👤</div><span class="card-kicker">Pessoas autorizadas</span></div>
-                <h2>Solicitantes</h2>
-                <p>Colaboradores autorizados a solicitar PTW.</p>
-                <div class="card-metrics">
-                    <div><strong id="homeSolicitantesTotal">--</strong><span>Total de colaboradores</span></div>
-                    <div><strong id="homeSolicitantesValidos">--</strong><span>Treinamentos válidos</span></div>
-                    <div><strong id="homeSolicitantesVencidos">--</strong><span>Treinamentos vencidos</span></div>
+        <main>
+            <section class="home-hero" aria-labelledby="home-title">
+                <div class="hero-copy">
+                    <p class="eyebrow">Governança de Permissão para Trabalho</p>
+                    <h1 id="home-title">Controle confiável.<br /><span>Trabalho seguro.</span></h1>
+                    <p class="hero-description">Uma visão integrada das autorizações, responsabilidades e supervisões para atividades críticas.</p>
+                    <div class="hero-assurance"><span class="assurance-mark" aria-hidden="true">✓</span> Informação centralizada para decisões responsáveis</div>
                 </div>
-                <a class="card-action" href="solicitantes.html">Acessar <span aria-hidden="true">→</span></a>
-            </div>
+                <aside class="platform-card" aria-label="Status da plataforma">
+                    <div class="platform-card-top">
+                        <img src="imagens/matriz-ptw-quadrada.svg" alt="" class="platform-mark" />
+                        <span class="platform-indicator"><i aria-hidden="true"></i> Plataforma</span>
+                    </div>
+                    <p class="platform-label">MATRIZ PTW</p>
+                    <h2>Central de autorizações</h2>
+                    <div class="platform-meta">
+                        <span>Versão <strong>5.0</strong></span>
+                        <span>Atualização <strong id="platform-update">Aguardando dados</strong></span>
+                    </div>
+                </aside>
+            </section>
 
-            <div class="card-menu card-responsaveis">
-                <div class="card-menu-top"><div class="icon">👔</div><span class="card-kicker">Governança de área</span></div>
-                <h2>Responsáveis por Área</h2>
-                <p>Gestores responsáveis pela autorização de cada área.</p>
-                <div class="card-metrics card-metrics-2">
-                    <div><strong id="homeResponsaveisTotal">--</strong><span>Responsáveis</span></div>
-                    <div><strong id="homeResponsaveisAreas">--</strong><span>Áreas cobertas</span></div>
+            <section class="institutional-indicators" aria-label="Indicadores institucionais">
+                <div class="institutional-indicator">
+                    <span class="indicator-label">Total de solicitantes</span>
+                    <strong id="homeSolicitantesTotal">--</strong>
+                    <span class="indicator-caption">Pessoas cadastradas na matriz</span>
                 </div>
-                <a class="card-action" href="responsaveis.html">Acessar <span aria-hidden="true">→</span></a>
-            </div>
+                <div class="institutional-indicator">
+                    <span class="indicator-label">Total de responsáveis</span>
+                    <strong id="homeResponsaveisTotal">--</strong>
+                    <span class="indicator-caption">Responsáveis por área</span>
+                </div>
+                <div class="institutional-indicator institutional-supervisors">
+                    <span class="indicator-label">Supervisores por atividade</span>
+                    <div class="supervisor-breakdown">
+                        <span><strong id="homeSupervisoresAltura">--</strong><small>Altura</small></span>
+                        <span><strong id="homeSupervisoresQuente">--</strong><small>Quente</small></span>
+                        <span><strong id="homeSupervisoresConfinado">--</strong><small>Confinado</small></span>
+                    </div>
+                    <span class="indicator-caption">Totais por categoria</span>
+                </div>
+                <div class="institutional-indicator">
+                    <span class="indicator-label">Total de áreas</span>
+                    <strong id="homeResponsaveisAreas">--</strong>
+                    <span class="indicator-caption">Áreas sob governança</span>
+                </div>
+            </section>
 
-            <div class="card-menu card-supervisores">
-                <div class="card-menu-top"><div class="icon">🛡️</div><span class="card-kicker">Supervisão especializada</span></div>
-                <h2>Supervisores</h2>
-                <p>Supervisores habilitados para atividades críticas.</p>
-                <div class="card-metrics">
-                    <div><strong id="homeSupervisoresAltura">--</strong><span>Altura</span></div>
-                    <div><strong id="homeSupervisoresQuente">--</strong><span>Quente</span></div>
-                    <div><strong id="homeSupervisoresConfinado">--</strong><span>Confinado</span></div>
+            <section class="modules-section" aria-labelledby="modules-title">
+                <div class="section-intro">
+                    <div>
+                        <p class="eyebrow">Acesso aos módulos</p>
+                        <h2 id="modules-title">Visão geral da matriz</h2>
+                    </div>
+                    <span class="section-caption">Selecione uma área para consultar os registros</span>
                 </div>
-                <a class="card-action" href="supervisores.html">Acessar <span aria-hidden="true">→</span></a>
-            </div>
+
+                <div class="menu-principal">
+                    <article class="card-menu card-solicitantes">
+                        <div class="card-menu-top">
+                            <div class="icon" aria-hidden="true"><span>01</span></div>
+                            <span class="card-kicker">Pessoas autorizadas</span>
+                        </div>
+                        <h3>Solicitantes</h3>
+                        <p>Colaboradores autorizados a solicitar Permissões para Trabalho.</p>
+                        <div class="card-metrics">
+                            <div><strong id="homeSolicitantesValidos">--</strong><span>Treinamentos válidos</span></div>
+                            <div><strong id="homeSolicitantesVencidos">--</strong><span>Treinamentos vencidos</span></div>
+                        </div>
+                        <a class="card-action" href="solicitantes.html">Explorar módulo <span aria-hidden="true">→</span></a>
+                    </article>
+
+                    <article class="card-menu card-responsaveis">
+                        <div class="card-menu-top">
+                            <div class="icon" aria-hidden="true"><span>02</span></div>
+                            <span class="card-kicker">Governança de área</span>
+                        </div>
+                        <h3>Responsáveis por Área</h3>
+                        <p>Gestores e responsáveis pelas autorizações de cada área.</p>
+                        <div class="card-feature-list">
+                            <span>Definição de autoridade por área</span>
+                            <span>Responsabilidade e rastreabilidade</span>
+                        </div>
+                        <a class="card-action" href="responsaveis.html">Explorar módulo <span aria-hidden="true">→</span></a>
+                    </article>
+
+                    <article class="card-menu card-supervisores">
+                        <div class="card-menu-top">
+                            <div class="icon" aria-hidden="true"><span>03</span></div>
+                            <span class="card-kicker">Supervisão especializada</span>
+                        </div>
+                        <h3>Supervisores</h3>
+                        <p>Supervisores habilitados para acompanhar atividades críticas.</p>
+                        <div class="card-feature-list">
+                            <span>Atividades críticas acompanhadas</span>
+                            <span>Altura, quente e espaço confinado</span>
+                        </div>
+                        <a class="card-action" href="supervisores.html">Explorar módulo <span aria-hidden="true">→</span></a>
+                    </article>
+                </div>
+            </section>
         </main>
 
         <footer class="corporate-footer">
-            <div class="footer-left">
-                <div class="footer-qr-block">
-                    <img id="qrIndex" src="" alt="QR Code para acessar a Matriz PTW" class="footer-qr" />
-                    <span><strong>Escaneie para acessar a Matriz PTW</strong><small>Acesso rápido pelo celular</small></span>
-                    <button type="button" id="btnBaixarQrIndex" class="footer-qr-download" onclick="baixarQRCode('qrIndex')">📥 Baixar QR Code</button>
+            <div class="footer-institution">
+                <div class="footer-brand">
+                    <img src="imagens/matriz-ptw-quadrada.svg" alt="" class="footer-brand-mark" />
+                    <div>
+                        <strong>Portal Corporativo de Permissão para Trabalho</strong>
+                        <span>Governança de Autorizações para Trabalho</span>
+                    </div>
+                </div>
+                <div class="footer-details">
+                    <span>Frontend <strong>GitHub Pages</strong></span>
+                    <span>Backend <strong>Vercel</strong></span>
+                    <span>Status <strong class="footer-status-online">Online</strong></span>
+                    <span>Versão <strong>5.0</strong></span>
+                    <span>Última atualização <strong id="data-atualizacao">Carregando...</strong></span>
                 </div>
             </div>
-            <div class="footer-right">
-                <a href="admin.html" class="footer-admin-link">🔒 Administração</a>
+            <div class="footer-utility">
+                <div class="footer-qr-block">
+                    <img id="qrIndex" src="" alt="QR Code para acessar a Matriz PTW" class="footer-qr" />
+                    <span><strong>Leve a matriz com você</strong><small>Escaneie para acessar pelo celular</small></span>
+                    <button type="button" id="btnBaixarQrIndex" class="footer-qr-download" onclick="baixarQRCode('qrIndex')">Baixar QR Code</button>
+                </div>
+                <a href="admin.html" class="footer-admin-link">Administração</a>
             </div>
         </footer>
     </div>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 132" role="img" aria-labelledby="title desc">
+  <title id="title">Matriz PTW</title>
+  <desc id="desc">Escudo de segurança com matriz de controle e marca Matriz PTW</desc>
+  <g>
+    <path d="M64 7 111 24v33c0 31-18 54-47 68C35 111 17 88 17 57V24L64 7Z" fill="#2a5962"/>
+    <path d="M64 20 99 33v24c0 24-13 42-35 53C42 99 29 81 29 57V33l35-13Z" fill="none" stroke="#849fa4" stroke-width="2"/>
+    <path d="M43 43h42v28H43zM43 57h42M57 43v28M71 43v28" fill="none" stroke="#d3ba91" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+    <circle cx="43" cy="43" r="3.5" fill="#fcf9f4"/>
+    <circle cx="85" cy="43" r="3.5" fill="#fcf9f4"/>
+    <circle cx="43" cy="71" r="3.5" fill="#fcf9f4"/>
+    <circle cx="85" cy="71" r="3.5" fill="#fcf9f4"/>
+    <path d="m44 79 12 11 28-29" fill="none" stroke="#fcf9f4" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+  </g>
+  <path d="M137 24h1v84h-1z" fill="#d3ba91"/>
+  <text x="158" y="61" fill="#3f3a31" font-family="Segoe UI, Arial, sans-serif" font-size="37" font-weight="700" letter-spacing="3">MATRIZ</text>
+  <text x="159" y="95" fill="#2a5962" font-family="Segoe UI, Arial, sans-serif" font-size="23" font-weight="700" letter-spacing="5">PTW</text>
+  <text x="227" y="95" fill="#8c7454" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="1.4">GOVERNANÇA DE AUTORIZAÇÕES</text>
+</svg>

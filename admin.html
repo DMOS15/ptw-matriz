@@ -4,14 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin - Matriz PTW</title>
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div class="container">
         <header class="site-header">
             <div class="header-top">
-                <img src="imagens/logo-jde.png" alt="JDE Logo" class="logo-jde" />
-                <div>
+                <div class="brand-lockup">
+                    <div class="brand-primary">
+                        <img src="imagens/matriz-ptw-horizontal.svg" alt="Matriz PTW" class="logo-ptw" />
+                        <div class="brand-descriptor">
+                            <strong>Governança de Autorizações para Trabalho</strong>
+                            <span>Controle de Solicitantes, Responsáveis e Supervisores</span>
+                        </div>
+                    </div>
+                    <span class="brand-divider" aria-hidden="true"></span>
+                    <div class="brand-secondary">
+                        <span>Identificação institucional</span>
+                        <img src="imagens/logo-jde.png" alt="JDE" class="logo-jde" />
+                    </div>
+                </div>
+                <div class="header-copy">
                     <p class="eyebrow">Controle de dados</p>
                     <h1>Área Administrativa</h1>
                     <p>Atualização segura da Matriz PTW</p>
@@ -20,28 +36,33 @@
             <a href="index.html" class="btn-voltar">← Voltar</a>
         </header>
 
-        <div id="telaLogin">
-            <div style="max-width:400px;margin:40px auto;padding:30px;background:#f8f9fa;border-radius:16px;text-align:center;">
-                <h2 style="margin-bottom:20px;">🔑 Acesso Restrito</h2>
-                <p style="color:#7f8c8d;margin-bottom:20px;">Digite o PIN para acessar o painel administrativo</p>
-                <input type="password" id="inputPin" placeholder="Digite o PIN" inputmode="numeric" style="width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px;font-size:1.2rem;text-align:center;margin-bottom:15px;" />
-                <div id="mensagemErro" style="color:#e74c3c;margin-bottom:10px;display:none;"></div>
-                <button onclick="verificarPin()" class="btn-atualizar" style="width:100%;padding:14px;font-size:1.1rem;">🔓 Entrar</button>
+        <div id="telaLogin" class="admin-login-shell">
+            <div class="admin-login admin-login-panel">
+                <img src="imagens/matriz-ptw-quadrada.svg" alt="" class="admin-login-mark" />
+                <p class="eyebrow">Acesso protegido</p>
+                <h2>Acesso administrativo</h2>
+                <p>Informe suas credenciais para gerenciar a matriz.</p>
+                <input type="password" id="inputPin" class="admin-pin-input" placeholder="Digite o PIN" inputmode="numeric" />
+                <div id="mensagemErro" class="admin-login-error" style="display:none;"></div>
+                <button onclick="verificarPin()" class="btn-atualizar admin-login-submit">Entrar no painel <span aria-hidden="true">→</span></button>
             </div>
         </div>
 
         <div id="dashboard" class="admin-dashboard" style="display:none;">
-            <div id="mensagemSucesso" class="admin-success" hidden>✅ Login realizado</div>
+            <div id="mensagemSucesso" class="admin-success" hidden>Login realizado</div>
             <div class="admin-overview">
-                <div class="admin-overview-card">
-                    <div id="statusServidor" style="font-size:1.2rem;">🟡 Verificando...</div>
+                <div class="admin-overview-card admin-status-card">
+                    <span class="admin-metric-mark" aria-hidden="true">01</span>
+                    <div id="statusServidor">Verificando...</div>
                     <small>Servidor</small>
                 </div>
                 <div class="admin-overview-card">
+                    <span class="admin-metric-mark" aria-hidden="true">02</span>
                     <div id="contadorRegistros">Dados PTW</div>
                     <small>Base de registros</small>
                 </div>
                 <div class="admin-overview-card">
+                    <span class="admin-metric-mark" aria-hidden="true">03</span>
                     <div id="ultimaAtualizacao">-</div>
                     <small>Última atualização</small>
                 </div>
@@ -52,7 +73,7 @@
                     <span class="admin-card-label">Atualização individual</span>
                     <h3>Treinamentos PTW</h3>
                     <p>Atualiza o arquivo <strong>solicitantes.json</strong>.</p>
-                    <button onclick="abrirModalUpload('treinamentos')" class="btn-atualizar">Selecionar XLSX <span>→</span></button>
+                    <button onclick="abrirModalUpload('treinamentos')" class="btn-atualizar">Selecionar XLSX <span aria-hidden="true">→</span></button>
                 </article>
                 <article class="admin-upload-card admin-card-copper">
                     <span class="admin-card-label">Atualização integrada</span>
@@ -61,7 +82,7 @@
                     <div class="admin-card-actions">
                         <button onclick="abrirModalUpload('responsaveis')" class="btn-atualizar">Responsáveis</button>
                         <button onclick="abrirModalUpload('supervisores')" class="btn-atualizar">Supervisores</button>
-                        <button onclick="abrirModalUpload('matriz')" class="btn-atualizar">Matriz completa <span>→</span></button>
+                        <button onclick="abrirModalUpload('matriz')" class="btn-atualizar">Matriz completa <span aria-hidden="true">→</span></button>
                     </div>
                 </article>
             </div>
@@ -69,12 +90,12 @@
             <section class="backup-panel">
                 <div class="section-heading">
                     <div><span class="eyebrow">Proteção antes da atualização</span><h2>Backup e Arquivos Atuais</h2></div>
-                    <button type="button" class="backup-download-all" onclick="baixarBackupAtual()">📥 Baixar Backup Atual</button>
+                    <button type="button" class="backup-download-all" onclick="baixarBackupAtual()">Baixar backup atual</button>
                 </div>
                 <p class="backup-warning">Recomendamos baixar os arquivos atuais antes de realizar alterações.</p>
                 <div class="backup-groups">
-                    <div class="backup-group"><strong>Solicitantes</strong><a href="dados/solicitantes.json" download="solicitantes.json">📄 Baixar JSON</a><button type="button" onclick="baixarXlsx('solicitantes', 'Solicitantes_PTW.xlsx')">📊 Baixar Último XLSX Enviado</button><small id="uploadInfoTreinamentos">Nenhum upload registrado.</small></div>
-                    <div class="backup-group"><strong>Responsáveis e Supervisores</strong><a href="dados/responsaveis.json" download="responsaveis.json">📄 Baixar JSON Atual</a><a href="dados/supervisores_altura.json" download="supervisores_altura.json">📄 Supervisores JSON</a><button type="button" onclick="baixarXlsx('matriz', 'Responsaveis_Supervisores.xlsx')">📊 Baixar Último XLSX Enviado</button><small id="uploadInfoMatriz">Nenhum upload registrado.</small></div>
+                    <div class="backup-group"><strong>Solicitantes</strong><a href="dados/solicitantes.json" download="solicitantes.json">Baixar JSON</a><button type="button" onclick="baixarXlsx('solicitantes', 'Solicitantes_PTW.xlsx')">Baixar último XLSX enviado</button><small id="uploadInfoTreinamentos">Nenhum upload registrado.</small></div>
+                    <div class="backup-group"><strong>Responsáveis e Supervisores</strong><a href="dados/responsaveis.json" download="responsaveis.json">Baixar JSON atual</a><a href="dados/supervisores_altura.json" download="supervisores_altura.json">Baixar supervisores JSON</a><button type="button" onclick="baixarXlsx('matriz', 'Responsaveis_Supervisores.xlsx')">Baixar último XLSX enviado</button><small id="uploadInfoMatriz">Nenhum upload registrado.</small></div>
                 </div>
             </section>
 
@@ -84,31 +105,33 @@
             </section>
 
             <div id="uploadProgresso" style="display:none;margin:20px 0;padding:20px;background:#f8f9fa;border-radius:12px;">
-                <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                <div class="progress-label">
                     <span id="progressoMensagem">Enviando arquivo...</span>
                     <span id="progressoPorcentagem">0%</span>
                 </div>
-                <div style="width:100%;height:20px;background:#e0e0e0;border-radius:10px;overflow:hidden;">
-                    <div id="progressoBarra" style="height:100%;width:0%;background:#27ae60;transition:width 0.3s;"></div>
+                <div class="progress-track">
+                    <div id="progressoBarra" class="progress-bar"></div>
                 </div>
-                <div id="progressoDetalhes" style="margin-top:10px;font-size:0.9rem;color:#7f8c8d;"></div>
+                <div id="progressoDetalhes" class="progress-details"></div>
             </div>
         </div>
 
         <footer>
             <div class="footer-left">
-                <img src="imagens/logo-jde.png" alt="JDE" class="logo-footer" />
-                <span>📅 <span id="data-atualizacao">Carregando...</span></span>
-                <span>|</span>
-                <span id="status-servidor" class="servidor-offline">🟡 Verificando...</span>
-                <span>|</span>
-                <span>📌 Versão 4.0</span>
-                <span>|</span>
-                <span>🏢 Matriz PTW</span>
+                <div class="footer-system-brand">
+                    <img src="imagens/matriz-ptw-horizontal.svg" alt="Matriz PTW" class="footer-ptw-logo" />
+                    <div><strong>Portal Corporativo de Permissão para Trabalho</strong><span>Frontend GitHub Pages · Backend Vercel</span></div>
+                    <img src="imagens/logo-jde.png" alt="JDE" class="logo-footer" />
+                </div>
+                <div class="footer-system-meta">
+                    <span>Status <strong id="status-servidor" class="servidor-offline">Verificando...</strong></span>
+                    <span>Versão <strong>5.0</strong></span>
+                    <span>Última atualização <strong id="data-atualizacao">Carregando...</strong></span>
+                </div>
             </div>
             <div class="footer-right">
-                <button onclick="window.location.href='index.html'" class="btn-atualizar">🏠 Início</button>
-                <button onclick="atualizarDados()" class="btn-atualizar">🔄 Recarregar</button>
+                <button onclick="window.location.href='index.html'" class="btn-atualizar">Início</button>
+                <button onclick="atualizarDados()" class="btn-atualizar">Recarregar</button>
             </div>
         </footer>
     </div>
@@ -116,31 +139,31 @@
     <div id="modalUpload" class="modal" style="display:none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitulo">📤 Upload Excel</h2>
+                <h2 id="modalTitulo">Upload de planilha</h2>
                 <span class="modal-close" onclick="fecharModalUpload()">&times;</span>
             </div>
             <div class="modal-body">
                 <p id="modalDescricao">Selecione o arquivo Excel para atualizar os dados:</p>
                 <div class="arquivo-esperado">
-                    <strong>📄 Nome do arquivo esperado:</strong>
+                    <strong>Nome do arquivo esperado:</strong>
                     <span id="nomeArquivoEsperado">Arquivo Excel</span>
                 </div>
                 <div id="uploadArea" class="upload-area">
-                    <div style="font-size:4rem;">📁</div>
-                    <p style="color:#2c3e50;font-weight:600;margin:10px 0;">Clique para selecionar ou arraste o arquivo</p>
-                    <p style="color:#7f8c8d;font-size:0.9rem;">Arquivos aceitos: .xlsx</p>
+                        <div class="upload-mark" aria-hidden="true">+</div>
+                        <p class="upload-instruction">Clique para selecionar ou arraste o arquivo</p>
+                        <p class="upload-formats">Arquivos aceitos: .xlsx</p>
                     <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none;">
                 </div>
                 <div id="fileInfo" class="file-info" style="display:none;"><span id="fileName">Arquivo selecionado</span></div>
                 <div style="margin-top:12px;">
-                    <label for="inputUsuarioUpload" style="display:block;margin-bottom:8px;font-weight:600;">Nome do usuário</label>
-                    <input id="inputUsuarioUpload" type="text" placeholder="Digite o nome para registrar no histórico" style="width:100%;padding:10px 12px;border:1px solid #dfe6e9;border-radius:8px;font-size:1rem;box-sizing:border-box;" required />
+                    <label for="inputUsuarioUpload" class="upload-user-label">Nome do usuário</label>
+                    <input id="inputUsuarioUpload" class="upload-user-input" type="text" placeholder="Digite o nome para registrar no histórico" required />
                 </div>
-                <div id="uploadLoading" class="upload-loading" style="display:none;">⏳ Enviando e processando dados... Aguarde!</div>
+                <div id="uploadLoading" class="upload-loading" style="display:none;">Enviando e processando dados... Aguarde.</div>
                 <div id="uploadError" class="upload-error" style="display:none;"></div>
                 <div style="display:flex;gap:10px;margin-top:15px;">
-                    <button onclick="enviarArquivo()" id="btnEnviar" class="btn-atualizar" style="background:#27ae60;" disabled>📤 Enviar e Processar</button>
-                    <button onclick="fecharModalUpload()" class="btn-atualizar" style="background:#95a5a6;">Cancelar</button>
+                    <button onclick="enviarArquivo()" id="btnEnviar" class="btn-atualizar" disabled>Enviar e Processar</button>
+                    <button onclick="fecharModalUpload()" class="btn-voltar">Cancelar</button>
                 </div>
             </div>
         </div>
